@@ -1,0 +1,113 @@
+.stress-section {
+    padding: 60px 8%;
+    background: #f8faff;
+    display: flex;
+    justify-content: center;
+}
+
+
+.stress-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 30px;
+    padding: 50px;
+    max-width: 800px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+}
+
+.stress-heading {
+    font-size: 2.2rem;
+    color: #2D3748;
+    margin-bottom: 30px;
+}
+
+.highlight-red {
+    color: #FF5E5E; /* Image wala red color */
+}
+
+.emoji-container {
+    margin-bottom: 20px;
+}
+
+.stress-emoji {
+    font-size: 4rem;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.stress-label {
+    color: #4A5568;
+    font-size: 1.1rem;
+}
+
+/* Progress Bar Styling */
+.progress-container {
+    width: 60%;
+    height: 12px;
+    background: #edf2f7;
+    border-radius: 20px;
+    margin: 20px auto 40px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    width: 75%; /* Stress level high dikhane ke liye */
+    height: 100%;
+    background: linear-gradient(90deg, #FF8A8A, #FF5E5E);
+    border-radius: 20px;
+}
+
+/* Bottom Action Box (Glass Effect) */
+.action-box {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.02);
+}
+
+.action-box p {
+    color: #718096;
+    margin-bottom: 20px;
+    font-size: 1.05rem;
+}
+
+.action-btns {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.btn-chat {
+    background: #5390F5; /* Logo Blue */
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-view, .btn-doctor {
+    background: white;
+    color: #4A5568;
+    border: 1px solid #e2e8f0;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-chat:hover { background: #6D5DF1; }
+.btn-view:hover, .btn-doctor:hover { border-color: #5390F5; color: #5390F5; }
+
+/* Mobile Responsive */
+@media (max-width: 600px) {
+    .action-btns { flex-direction: column; }
+    .progress-container { width: 90%; }
+}
