@@ -1,16 +1,22 @@
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
-import './App.css'
 import { Route, Routes } from 'react-router-dom'
 import Home from './Pages/Home'
-import Result from './Pages/emotions'
-import Login from './Pages/login'
+import Result from './Pages/result'
+import ScanMethods from './Pages/scanmethods'
+import UserLogin from './Pages/userlogin'
+import UserSignup from './Pages/usersignup'
+import DoctorLogin from './Pages/doclogin'
+import DoctorSignup from './Pages/docsignup'
+import ResetPassword from './Pages/Resetpassword'
+import ForgotPassword from './Pages/forget'
+import Doctors from './Pages/doctors'
+import Chatbot from './Pages/chatbot'
+import UserDashboard from './Pages/userdash'
 
-// import Signin from './Pages/signin'
-// import ForgotPassword from './Pages/forget'
-// import ResetPassword from './Pages/Resetpassword'
-// import Admin from './Pages/admindash'
+
+import Homeee from './Pages/admindash'
 
 
 function App() {
@@ -21,14 +27,21 @@ function App() {
     
       <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="result" element={<Result />} />
-      <Route path="/login" element={<Login />} />
-
-      {/* <Route path="/signin" element={<Signin />} />
-      <Route path="/login" element={<Login />} />
+      <Route path="/result" element={<Result />} />
+      <Route path="/scan" element={<ScanMethods />} />
+      <Route path="/userlogin" element={<UserLogin />} />
+      <Route path="/usersignup" element={<UserSignup />} />
+      <Route path="/doclogin" element={<DoctorLogin />} />
+      <Route path="/docsignup" element={<DoctorSignup />} />
       <Route path="/forget" element={<ForgotPassword />} />
-      <Route path="/reset-password/:token" element={<ResetPassword />} />
-      <Route path="/admin" element={<Admin />} /> */}
+      <Route path="/reset" element={<ResetPassword />} />
+      <Route path="/doctors" element={<Doctors />} />
+      <Route path="/chatbot" element={<Chatbot />} />
+      <Route path="/Dashboard" element={<UserDashboard />} />
+
+
+
+      <Route path="/admin" element={<Homeee />} />
 
 
 
