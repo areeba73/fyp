@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-/* Agar aapke components src folder mein hain */
 @source "./src/**/*.{js,jsx,ts,tsx}";
 
 /* bg-[#2F357D] */

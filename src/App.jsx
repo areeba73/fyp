@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+// import reactLogo from './assets/react.svg'
+// import viteLogo from '/vite.svg'
 import { Route, Routes } from 'react-router-dom'
 import Home from './Pages/Home'
 import Result from './Pages/result'
@@ -14,9 +14,7 @@ import ForgotPassword from './Pages/forget'
 import Doctors from './Pages/doctors'
 import Chatbot from './Pages/chatbot'
 import UserDashboard from './Pages/userdash'
-
-
-import Homeee from './Pages/admindash'
+// import Admindash from './Pages/admindash'
 
 
 function App() {
@@ -38,10 +36,7 @@ function App() {
       <Route path="/doctors" element={<Doctors />} />
       <Route path="/chatbot" element={<Chatbot />} />
       <Route path="/Dashboard" element={<UserDashboard />} />
-
-
-
-      <Route path="/admin" element={<Homeee />} />
+      {/* <Route path="/admin" element={<Admindash />} /> */}
 
 
 
