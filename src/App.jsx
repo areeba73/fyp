@@ -14,7 +14,9 @@ import ForgotPassword from './Pages/forget'
 import Doctors from './Pages/doctors'
 import Chatbot from './Pages/chatbot'
 import UserDashboard from './Pages/userdash'
-// import Admindash from './Pages/admindash'
+import AdminDashboard from './Pages/admindash'
+import DoctorDashboard from './Pages/dctrdash'
+
 
 
 function App() {
@@ -35,8 +37,10 @@ function App() {
       <Route path="/reset" element={<ResetPassword />} />
       <Route path="/doctors" element={<Doctors />} />
       <Route path="/chatbot" element={<Chatbot />} />
-      <Route path="/Dashboard" element={<UserDashboard />} />
-      {/* <Route path="/admin" element={<Admindash />} /> */}
+      <Route path="/userdash" element={<UserDashboard />} />
+      <Route path="/admindash" element={<AdminDashboard />} />
+      <Route path="/dctrdash" element={<DoctorDashboard />} />
+
 
 
 

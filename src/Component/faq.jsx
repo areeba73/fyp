@@ -6,16 +6,16 @@ const FAQ = () => {
 
   const faqs = [
     {
-      question: "EmoTrack kaise kaam karta hai?",
-      answer: "EmoTrack AI aur aapke inputs ka istemal karke aapke rozana ke emotions ko track karta hai aur aapko behtar mental health ke liye insights deta hai."
+      question: "How does EmoTrack work?",
+      answer: "EmoTrack uses AI and your daily inputs to track your emotions, providing you with personalized insights for better mental health management."
     },
     {
-      question: "Kya mera data mahfooz hai?",
-      answer: "Ji han, hum aapki privacy ka pura khayal rakhte hain. Aapka data encrypted hai aur sirf aap hi usay dekh sakte hain."
+      question: "Is my data secure?",
+      answer: "Yes, your privacy is our top priority. Your data is fully encrypted, and only you have the authorization to access your personal information."
     },
     {
-      question: "Kya main Doctors se rabta kar sakta hoon?",
-      answer: "Bilkul! Humare platform par verified doctors maujood hain jinse aap apni reports share karke mashwara le sakte hain."
+      question: "Can I consult with Doctors?",
+      answer: "Absolutely! Our platform features verified healthcare professionals. You can securely share your reports and get expert medical advice directly."
     }
   ];
 
@@ -30,7 +30,7 @@ const FAQ = () => {
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2F357D] mb-4">
           Frequently Asked <span className="text-blue-500">Questions</span>
         </h2>
-        <p className="text-[#2F357D]/60 text-base md:text-lg">Aapke zehan mein uthne wale aam sawalon ke jawab.</p>
+        <p className="text-[#2F357D]/60 text-base md:text-lg">Answers to common questions you might have in mind.</p>
       </div>
 
       {/* FAQ List */}
@@ -59,7 +59,7 @@ const FAQ = () => {
               />
             </button>
 
-            {/* Answer with smooth height animation - max-height logic kept same */}
+            {/* Answer with smooth height animation */}
             <div 
               className={`transition-all duration-500 ease-in-out ${
                 openIndex === index ? 'max-h-60 md:max-h-40 opacity-100' : 'max-h-0 opacity-0'

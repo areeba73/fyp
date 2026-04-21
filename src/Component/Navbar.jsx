@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { HiMenuAlt3, HiX } from 'react-icons/hi'; // Icons install karein: npm install react-icons
+import { HiMenuAlt3, HiX } from 'react-icons/hi'; 
 import logo from '../assets/logo.png'; 
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false); 
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // Mobile menu state
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); 
   const location = useLocation();
 
   useEffect(() => {
@@ -17,7 +17,14 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navLinks = ['Home', 'Dashboard', 'Doctors', 'Chatbot', 'Result', 'Scan'];
+  const navLinks = [
+    { name: 'Home', path: '/' },
+    { name: 'Dashboard', path: '/userdash' },
+    { name: 'Doctors', path: '/doctors' },
+    { name: 'Chatbot', path: '/chatbot' },
+    { name: 'Result', path: '/result' },
+    { name: 'Emotions Scan', path: '/scan' }, 
+  ];
 
   return (
     <nav className={`fixed top-0 left-0 w-full z-[1000] transition-all duration-500 px-[5%] flex justify-between items-center
@@ -25,28 +32,30 @@ const Navbar = () => {
         ? 'h-[70px] bg-white/80 backdrop-blur-xl shadow-sm border-b border-[#edf2f7]' 
         : 'h-[90px] bg-transparent border-b border-transparent'}`}> 
       
-      {/* Logo */}
+      {/* 1. Logo Link: Home par le kar jayega */}
       <Link to="/" className="flex items-center z-[1100]">
         <img 
           src={logo} 
-          alt="EmoTrack" 
+          alt="EmoTrack Logo" 
           className={`transition-all duration-300 ${scrolled ? 'h-[40px] md:h-[45px]' : 'h-[50px] md:h-[55px]'}`} 
         />
       </Link>
 
-      {/* Desktop Links (Hidden on Mobile) */}
+      {/* 2. Desktop Links */}
       <div className={`hidden lg:flex items-center px-6 py-2 rounded-full border transition-all duration-500
         ${scrolled 
           ? 'border-transparent bg-transparent' 
           : 'border-white/40 bg-white/20 backdrop-blur-md'}`}>
         <ul className="flex gap-8 items-center">
-          {navLinks.map((item) => {
-            const path = item === 'Home' ? '/' : `/${item.toLowerCase()}`;
-            const isActive = location.pathname === path;
+          {navLinks.map((link) => {
+            const isActive = location.pathname === link.path;
             return (
-              <li key={item}>
-                <Link to={path} className={`text-sm font-bold transition-all ${isActive ? 'text-blue-500' : 'text-slate-700 hover:text-blue-500'}`}>
-                  {item === 'Scan' ? 'Emotions Scan' : item}
+              <li key={link.name}>
+                <Link 
+                  to={link.path} 
+                  className={`text-sm font-bold transition-all ${isActive ? 'text-blue-500' : 'text-slate-700 hover:text-blue-500'}`}
+                >
+                  {link.name}
                 </Link>
               </li>
             );
@@ -54,7 +63,7 @@ const Navbar = () => {
         </ul>
       </div>
 
-      {/* Right Buttons & Mobile Toggle */}
+      {/* 3. Sign Up / Auth Links */}
       <div className="flex items-center gap-3 md:gap-4 z-[1100]">
         <div className="relative">
           <button 
@@ -69,15 +78,29 @@ const Navbar = () => {
           {showDropdown && (
             <div className="absolute right-0 mt-3 w-40 md:w-44 bg-white border border-slate-100 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
               <div className="flex flex-col py-1">
-                <Link to="/docsignup" className="px-5 py-3 text-[11px] font-bold text-[#2F357D] hover:bg-slate-50 transition-all">👨‍⚕️ As a Doctor</Link>
+                {/* Doctor Link */}
+                <Link 
+                  to="/docsignup" 
+                  onClick={() => setShowDropdown(false)} 
+                  className="px-5 py-3 text-[11px] font-bold text-[#2F357D] hover:bg-slate-50 transition-all"
+                >
+                  👨‍⚕️ As a Doctor
+                </Link>
                 <div className="h-[1px] bg-slate-100 mx-3"></div>
-                <Link to="/usersignup" className="px-5 py-3 text-[11px] font-bold text-[#2F357D] hover:bg-slate-50 transition-all">😊 As a Patient</Link>
+                {/* Patient Link */}
+                <Link 
+                  to="/usersignup" 
+                  onClick={() => setShowDropdown(false)} 
+                  className="px-5 py-3 text-[11px] font-bold text-[#2F357D] hover:bg-slate-50 transition-all"
+                >
+                  😊 As a Patient
+                </Link>
               </div>
             </div>
           )}
         </div>
 
-        {/* Mobile Menu Toggle Button */}
+        {/* Mobile Toggle */}
         <button 
           className="lg:hidden text-2xl text-[#2F357D] p-1"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -86,19 +109,24 @@ const Navbar = () => {
         </button>
       </div>
 
-      {/* Mobile Sidebar Menu (Overlay) */}
+      {/* 4. Mobile Sidebar Menu */}
       <div className={`fixed inset-0 bg-white z-[1050] lg:hidden transition-transform duration-500 ease-in-out transform ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
         <div className="flex flex-col items-center justify-center h-full gap-8">
-          {navLinks.map((item) => (
+          {navLinks.map((link) => (
             <Link 
-              key={item}
-              to={item === 'Home' ? '/' : `/${item.toLowerCase()}`}
-              onClick={() => setIsMobileMenuOpen(false)}
+              key={link.name}
+              to={link.path}
+              onClick={() => setIsMobileMenuOpen(false)} // Link click hone par menu close ho jaye
               className="text-2xl font-black text-[#2F357D] hover:text-blue-500 transition-all"
             >
-              {item === 'Scan' ? 'Emotions Scan' : item}
+              {link.name}
             </Link>
           ))}
+          {/* Mobile mein Sign Up options bhi add kar sakte hain yahan */}
+          <div className="flex flex-col gap-4 mt-4">
+             <Link to="/docsignup" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-bold text-blue-600">Register as Doctor</Link>
+             <Link to="/usersignup" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-bold text-blue-600">Register as Patient</Link>
+          </div>
         </div>
       </div>
     </nav>

@@ -2,6 +2,7 @@ import React from 'react';
 import Navbar from '../Component/Navbar';
 import Footer from '../Component/Footer';
 import bg from "../assets/bg.jpeg";
+import { LogOut, Calendar, Clock,  } from 'lucide-react'; 
 
 const UserDashboard = () => {
   const moodConfig = {
@@ -15,13 +16,13 @@ const UserDashboard = () => {
   };
 
   const moodColors = {
-    happy: "bg-blue-500",
-    sad: "bg-blue-600",
-    angry: "bg-blue-700",
-    neutral: "bg-blue-400",
-    fear: "bg-blue-800",
-    surprise: "bg-blue-500",
-    disgust: "bg-blue-600"
+    happy: "bg-[#2F357D]/80",
+    sad: "bg-[#2F357D]/80",
+    angry: "bg-[#2F357D]/80",
+    neutral: "bg-[#2F357D]/80",
+    fear: "bg-[#2F357D]/80",
+    surprise: "bg-[#2F357D]/80",
+    disgust: "bg-[#2F357D]/80"
   };
 
   const moodData = [
@@ -34,6 +35,17 @@ const UserDashboard = () => {
     { day: "Sun", type: "happy", value: 95 }
   ];
 
+  // Appointment Data (Email-based)
+  const upcomingAppointments = [
+  { 
+    doctor: "Dr. Sarah Ahmed", 
+    specialty: "Psychologist", 
+    date: "April 25, 2024", 
+    time: "10:30 AM",
+    status: "pending" // Ya "approved"
+  }
+];
+
   return (
     <div className="min-h-screen relative font-sans text-blue-900 overflow-x-hidden">
       <div className="fixed inset-0 -z-10">
@@ -43,23 +55,22 @@ const UserDashboard = () => {
 
       <Navbar />
 
-      <main className="pt-24 md:pt-32 pb-14 px-4 md:px-10 lg:px-20 max-w-[1600px] mx-auto animate-fadeIn">
+      <main className="pt-24 md:pt-32 pb-24 px-4 md:px-10 lg:px-20 max-w-[1600px] mx-auto animate-fadeIn">
         
         {/* HEADER */}
         <div className="text-center md:text-left mb-10">
-          <h2 className="text-3xl md:text-5xl font-extrabold text-blue-900 tracking-tight">
+          <h2 className="text-3xl md:text-5xl font-extrabold text-[#2F357D] tracking-tight">
             Welcome back, David <span className="inline-block animate-bounce">😊</span>
           </h2>
-          <p className="text-blue-700/70 mt-2 font-medium">Your emotional insights dashboard</p>
+          <p className="text-[#2F357D] mt-2 font-medium">Your emotional insights dashboard</p>
         </div>
 
-        {/* TOP CARDS GRID - items-stretch ensure equal height */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 items-stretch">
           
           {/* CHART SECTION */}
           <div className="lg:col-span-2 bg-white/70 backdrop-blur-2xl rounded-[2.5rem] p-6 md:p-10 shadow-2xl border border-white/50 flex flex-col">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-              <h3 className="text-xl md:text-2xl font-bold text-blue-900">Weekly Mood Flow</h3>
+              <h3 className="text-xl md:text-2xl font-bold text-[#2F357D]">Weekly Mood Flow</h3>
               <div className="flex flex-wrap gap-2 p-1.5 bg-white/50 rounded-2xl border border-white/50">
                 {Object.values(moodConfig).map((m, i) => (
                   <span key={i} className="text-lg hover:scale-125 transition-transform cursor-help" title={m.label}>{m.emoji}</span>
@@ -90,20 +101,14 @@ const UserDashboard = () => {
             </div>
           </div>
 
-          {/* ATTRACTIVE BALANCE CARD (Equal Height, No Button) */}
-          <div className="bg-gradient-to-br from-blue-600 via-indigo-600 to-blue-800 rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden group flex flex-col items-center justify-between border border-white/20">
-            {/* Background Decorative Orbs */}
+          {/* BALANCE CARD */}
+          <div className="bg-[#2F357D] rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden group flex flex-col items-center justify-between border border-white/20">
             <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-3xl"></div>
             <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-blue-400/20 rounded-full blur-3xl"></div>
-
             <h3 className="text-white text-xl font-bold z-10 w-full text-center">Overall Balance</h3>
-            
             <div className="relative flex items-center justify-center z-10 flex-grow">
-              {/* Animated Rings */}
               <div className="absolute w-52 h-52 rounded-full border-2 border-white/5 animate-[spin_20s_linear_infinite]"></div>
               <div className="absolute w-44 h-44 rounded-full border border-white/10 animate-[spin_10s_linear_infinite_reverse]"></div>
-              
-              {/* Main Progress Circle */}
               <div className="relative w-40 h-40 rounded-full border-[12px] border-white/10 border-t-white flex items-center justify-center shadow-inner bg-black/5 backdrop-blur-sm">
                 <div className="text-center">
                   <span className="text-5xl font-black text-white tracking-tighter">78%</span>
@@ -111,15 +116,58 @@ const UserDashboard = () => {
                 </div>
               </div>
             </div>
-
             <div className="z-10 text-white/60 text-[11px] font-medium italic text-center px-4">
               "Your emotional state is consistently balanced this week."
             </div>
           </div>
 
-          {/* REFLECTIONS (Short & Balanced) */}
+          {/* APPOINTMENT SECTION */}
+         
+          <div className="lg:col-span-3 mt-8">
+            <h3 className="text-2xl font-bold mb-6 text-[#2F357D] px-2">Booked Appointment</h3>
+            {upcomingAppointments.length > 0 ? (
+              <div className="bg-white/80 backdrop-blur-xl p-6 rounded-[2.5rem] border border-blue-200 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
+                <div className="flex items-center gap-5">
+                  <div className="w-16 h-16 bg-[#2F357D] rounded-2xl flex items-center justify-center text-white shadow-lg">
+                    <Calendar size={32} />
+                  </div>
+                  
+                  <div>
+                    
+                    <h4 className="text-xl font-bold text-[#2F357D]">{upcomingAppointments[0].doctor}</h4>
+                    <p className="text-sm text-blue-600 font-semibold">{upcomingAppointments[0].specialty}</p>
+                  </div>
+                </div>
+                
+                <div className="flex flex-wrap gap-4 justify-center items-center">
+                  <div className="flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-xl border border-blue-100">
+                    <Calendar size={16} className="text-[#2F357D]" />
+                    <span className="text-sm font-bold text-[#2F357D]">{upcomingAppointments[0].date}</span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-xl border border-blue-100">
+                    <Clock size={16} className="text-[#2F357D]" />
+                    <span className="text-sm font-bold text-[#2F357D]">{upcomingAppointments[0].time}</span>
+                  </div>
+                  <div className={`px-4 py-1 rounded-full text-xs font-bold border ${
+    upcomingAppointments[0].status === 'approved' 
+    ? 'bg-green-100 text-green-700 border-green-200' 
+    : 'bg-yellow-100 text-yellow-700 border-yellow-200'
+  }`}>
+    {upcomingAppointments[0].status === 'approved' ? '● Approved' : '○ Pending'}
+  </div>
+                 
+                </div>
+              </div>
+            ) : (
+              <div className="text-center p-10 bg-white/40 rounded-[2.5rem] border-2 border-dashed border-blue-200">
+                <p className="text-blue-900/50 font-medium">No appointments booked yet via email.</p>
+              </div>
+            )}
+          </div>
+
+          {/* REFLECTIONS */}
           <div className="lg:col-span-3 mt-4">
-            <h3 className="text-2xl font-bold mb-6 text-blue-900 px-2">Recent Reflections</h3>
+            <h3 className="text-2xl font-bold mb-6 text-[#2F357D] px-2">Recent Reflections</h3>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {[
                 { date: "April 12", text: "Had a great day enjoying the weather!", emoji: "😊" },
@@ -132,7 +180,7 @@ const UserDashboard = () => {
                   style={{ animation: `fadeIn 0.8s ease-out ${i * 0.2}s forwards`, opacity: 0 }}
                 >
                   <div className="flex justify-between items-center mb-1">
-                    <span className="text-[9px] font-black text-blue-600/60 uppercase tracking-widest">{ref.date}</span>
+                    <span className="text-[9px] font-black text-blue-900 uppercase tracking-widest">{ref.date}</span>
                     <span className="text-xl group-hover:scale-110 transition-transform">{ref.emoji}</span>
                   </div>
                   <p className="text-[13px] text-blue-900/80 leading-snug font-medium line-clamp-1">{ref.text}</p>
@@ -143,6 +191,12 @@ const UserDashboard = () => {
 
         </div>
       </main>
+
+      {/* FIXED LOGOUT BUTTON (Bottom Right) */}
+      <button className="fixed bottom-8 right-8 z-50 flex items-center gap-2 bg-white/90 backdrop-blur-md hover:bg-red-500 hover:text-white text-red-600 px-6 py-3 rounded-full font-bold transition-all duration-300 border border-red-500/20 shadow-2xl group">
+        <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-500 ease-in-out whitespace-nowrap">Logout</span>
+        <LogOut size={20} />
+      </button>
 
       <Footer />
 
