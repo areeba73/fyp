@@ -84,7 +84,7 @@ const AdminDashboard = () => {
               onClick={() => setActiveView(activeView === 'settings' ? 'dashboard' : 'settings')}
               className={`px-6 py-3 rounded-2xl text-sm font-bold transition-all shadow-lg ${activeView === 'settings' ? 'bg-blue-100 text-blue' : 'bg-[#2F357D] text-white hover:bg-white hover:text-[#2F357D]'}`}
             >
-              {activeView === 'settings' ? '← Back to Dashboard' : '⚙️ Account Settings'}
+              {activeView === 'settings' ? 'Back to Dashboard' : '⚙️ Account Settings'}
             </button>
           </div>
         </div>

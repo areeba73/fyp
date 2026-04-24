@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Navbar from '../Component/Navbar';
 import Footer from '../Component/Footer';
 import bg from "../assets/bg.jpeg";
@@ -76,17 +77,26 @@ const Result = () => {
             
             {/* Horizontal Action Buttons */}
             <div className="flex flex-wrap justify-center gap-4">
-              <button className="flex items-center gap-2 bg-[#2F357D] hover:bg-[#2F357D] text-white px-8 py-3.5 rounded-full font-medium transition-all shadow-lg shadow-blue-200">
-                <span>💬</span> Talk to Chatbot
-              </button>
-              
-              <button className="flex items-center gap-2 bg-white/80 hover:bg-white text-[#2F357D] border border-[#2F357D]/20 px-8 py-3.5 rounded-full font-medium transition-all shadow-sm">
-                <span>🔍</span> View Suggestions
-              </button>
+             {/* Primary CTA: Talk to Chatbot */}
+<a href="/chatbot" className="no-underline">
+  <button className="flex items-center gap-2 bg-[#2F357D] hover:bg-[#3d45a1] text-white px-8 py-3.5 rounded-full font-medium transition-all shadow-lg shadow-blue-200">
+    <span>💬</span> Talk to Chatbot
+  </button>
+</a>
 
-              <button className="flex items-center gap-2 bg-white/80 hover:bg-white text-[#2F357D] border border-[#2F357D]/20 px-8 py-3.5 rounded-full font-medium transition-all shadow-sm">
-                <span>🩺</span> Find a Doctor
-              </button>
+{/* Secondary: View Suggestions */}
+<a href="/suggestions" className="no-underline">
+  <button className="flex items-center gap-2 bg-white/80 hover:bg-white text-[#2F357D] border border-[#2F357D]/20 px-8 py-3.5 rounded-full font-medium transition-all shadow-sm">
+    <span>🔍</span> View Suggestions
+  </button>
+</a>
+
+{/* Secondary: Find a Doctor */}
+<a href="/doctors" className="no-underline">
+  <button className="flex items-center gap-2 bg-white/80 hover:bg-white text-[#2F357D] border border-[#2F357D]/20 px-8 py-3.5 rounded-full font-medium transition-all shadow-sm">
+    <span>🩺</span> Find a Doctor
+  </button>
+</a>
             </div>
           </div>
 
