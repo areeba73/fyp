@@ -5,7 +5,7 @@ import { setLoading, setError } from '../store/slices/authSlice';
 import bg from "../assets/bg.jpeg";
 import logoImg from "../assets/logo.png";
 
-const Login = () => {
+const UserLogin = () => {
   // --- States for Input ---
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -103,4 +103,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default UserLogin;

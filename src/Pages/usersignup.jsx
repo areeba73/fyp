@@ -1,9 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react'; // State add ki
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux'; // Redux hooks
+import { setLoading } from '../store/slices/authSlice';
 import bg from "../assets/bg.jpeg";
 import logoImg from "../assets/logo.png";
 
 const UserSignup = () => {
+  // --- States for Signup Fields ---
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const dispatch = useDispatch();
+  const { loading } = useSelector((state) => state.auth);
+
+  const handleSignup = (e) => {
+    e.preventDefault();
+    dispatch(setLoading(true));
+    console.log("Signing up:", { fullName, email, password });
+    // Baad mein yahan Firebase logic aayega
+  };
+
   return (
     <div 
       className="min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center p-4 font-sans"
@@ -26,17 +43,42 @@ const UserSignup = () => {
             Start tracking your emotions and progress today.
           </p>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input type="text" placeholder="Full Name" className="md:col-span-2 w-full px-4 py-3 rounded-xl bg-white/60 border border-gray-100 shadow-sm focus:ring-2 focus:ring-blue-400 outline-none text-sm transition-all" />
+          <form onSubmit={handleSignup} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input 
+              type="text" 
+              placeholder="Full Name" 
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              required
+              className="md:col-span-2 w-full px-4 py-3 rounded-xl bg-white/60 border border-gray-100 shadow-sm focus:ring-2 focus:ring-blue-400 outline-none text-sm transition-all" 
+            />
             
-            <input type="email" placeholder="Email Address" className="md:col-span-2 px-4 py-3 rounded-xl bg-white/60 border border-gray-100 shadow-sm focus:ring-2 focus:ring-blue-400 outline-none text-sm transition-all" />
+            <input 
+              type="email" 
+              placeholder="Email Address" 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="md:col-span-2 px-4 py-3 rounded-xl bg-white/60 border border-gray-100 shadow-sm focus:ring-2 focus:ring-blue-400 outline-none text-sm transition-all" 
+            />
             
-            <input type="password" placeholder="Password" className="md:col-span-2 px-4 py-3 rounded-xl bg-white/60 border border-gray-100 shadow-sm focus:ring-2 focus:ring-blue-400 outline-none text-sm transition-all" />
+            <input 
+              type="password" 
+              placeholder="Password" 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="md:col-span-2 px-4 py-3 rounded-xl bg-white/60 border border-gray-100 shadow-sm focus:ring-2 focus:ring-blue-400 outline-none text-sm transition-all" 
+            />
             
-            <button className="md:col-span-2 w-full py-4 bg-[#2F357D] hover:bg-white text-white hover:text-black rounded-xl font-bold shadow-xl shadow-blue-200 transition-all active:scale-95 mt-2">
-              Create Account
+            <button 
+              type="submit"
+              disabled={loading}
+              className="md:col-span-2 w-full py-4 bg-[#2F357D] hover:bg-white text-white hover:text-black rounded-xl font-bold shadow-xl shadow-blue-200 transition-all active:scale-95 mt-2 disabled:opacity-70"
+            >
+              {loading ? "Creating Account..." : "Create Account"}
             </button>
-          </div>
+          </form>
 
           <p className="mt-8 text-center text-[#2F357D] text-sm">
             Already have an account?
@@ -46,8 +88,8 @@ const UserSignup = () => {
           </p>
         </div>
 
-        {/* RIGHT SIDE (Same as before) */}
-        <div className="w-full md:w-[42%] bg-gradient-to-br from-blue-600/5 to-indigo-600/15 flex flex-col items-center justify-center p-10 border-l border-white/40 relative text-center">
+        {/* RIGHT SIDE: hidden on mobile screens */}
+        <div className="hidden md:flex w-full md:w-[42%] bg-gradient-to-br from-blue-600/5 to-indigo-600/15 flex flex-col items-center justify-center p-10 border-l border-white/40 relative text-center">
           <div className="text-8xl mb-6 animate-bounce drop-shadow-lg">😊</div>
           <div className="relative z-10">
               <h3 className="text-2xl font-black text-[#2F357D] tracking-tight">Your Mind Matters</h3>
