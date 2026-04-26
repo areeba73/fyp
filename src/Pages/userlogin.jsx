@@ -1,9 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react'; // 1. useState add kiya
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux'; // 2. Redux tools
+import { setLoading, setError } from '../store/slices/authSlice'; 
 import bg from "../assets/bg.jpeg";
 import logoImg from "../assets/logo.png";
 
 const Login = () => {
+  // --- States for Input ---
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector((state) => state.auth);
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    dispatch(setLoading(true));
+    console.log("Logging in with:", email, password);
+    // Yahan hum baad mein Firebase ka login logic likhenge
+  };
+
   return (
     <div 
       className="min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center p-4 font-sans"
@@ -25,10 +41,24 @@ const Login = () => {
             Continue your journey to better mental health.
           </p>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input type="email" placeholder="Email Address" className="md:col-span-2 px-4 py-3 rounded-xl bg-white/60 border border-gray-100 shadow-sm focus:ring-2 focus:ring-blue-400 outline-none text-sm transition-all" />
+          <form onSubmit={handleLogin} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input 
+              type="email" 
+              placeholder="Email Address" 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="md:col-span-2 px-4 py-3 rounded-xl bg-white/60 border border-gray-100 shadow-sm focus:ring-2 focus:ring-blue-400 outline-none text-sm transition-all" 
+            />
             
-            <input type="password" placeholder="Password" className="md:col-span-2 px-4 py-3 rounded-xl bg-white/60 border border-gray-100 shadow-sm focus:ring-2 focus:ring-blue-400 outline-none text-sm transition-all" />
+            <input 
+              type="password" 
+              placeholder="Password" 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="md:col-span-2 px-4 py-3 rounded-xl bg-white/60 border border-gray-100 shadow-sm focus:ring-2 focus:ring-blue-400 outline-none text-sm transition-all" 
+            />
             
             <div className="md:col-span-2 flex justify-end mt-[-8px]">
               <Link to="/forget" className="text-[11px] text-[#2F357D] font-bold hover:underline">
@@ -36,10 +66,14 @@ const Login = () => {
               </Link>
             </div>
 
-            <button className="md:col-span-2 w-full py-4 bg-[#2F357D] hover:bg-blue-700 text-white rounded-xl font-bold shadow-xl shadow-blue-200 transition-all active:scale-95 mt-2">
-              Login Now
+            <button 
+              type="submit"
+              disabled={loading}
+              className="md:col-span-2 w-full py-4 bg-[#2F357D] hover:bg-blue-700 text-white rounded-xl font-bold shadow-xl shadow-blue-200 transition-all active:scale-95 mt-2 disabled:opacity-70"
+            >
+              {loading ? "Verifying..." : "Login Now"}
             </button>
-          </div>
+          </form>
 
           <p className="mt-8 text-center text-[#2F357D] text-sm">
             Don't have an account?
@@ -49,8 +83,8 @@ const Login = () => {
           </p>
         </div>
 
-        {/* RIGHT SIDE (Same as before) */}
-        <div className="w-full md:w-[42%] bg-gradient-to-br from-blue-600/5 to-indigo-600/15 flex flex-col items-center justify-center p-10 border-l border-white/40 relative text-center">
+        {/* RIGHT SIDE: hidden on small screens (added 'hidden md:flex') */}
+        <div className="hidden md:flex w-full md:w-[42%] bg-gradient-to-br from-blue-600/5 to-indigo-600/15 flex-col items-center justify-center p-10 border-l border-white/40 relative text-center">
           <div className="text-8xl mb-6 animate-bounce drop-shadow-lg">😊</div>
           <div className="relative z-10">
               <h3 className="text-2xl font-black text-[#2F357D] tracking-tight">Your Mind Matters</h3>

@@ -1,7 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 
-// Tailwind wali CSS file 
 import "./index.css"; 
 
 import { BrowserRouter } from "react-router-dom";

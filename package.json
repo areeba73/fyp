@@ -1,5 +1,5 @@
 {
-  "name": "walmart",
+  "name": "emotrack",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -14,7 +14,6 @@
     "@tailwindcss/postcss": "^4.1.18",
     "@tailwindcss/vite": "^4.1.18",
     "axios": "^1.12.2",
-    "bootstrap": "^5.3.8",
     "framer-motion": "^12.34.0",
     "lucide-react": "^0.564.0",
     "react": "^19.1.1",
