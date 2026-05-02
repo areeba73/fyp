@@ -1,7 +1,5 @@
 import { Route, Routes, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-
-// Saare Pages ke Imports
 import Home from './Pages/Home';
 import Result from './Pages/result';
 import ScanMethods from './Pages/scanmethods';
@@ -23,7 +21,6 @@ function App() {
 
   return (
     <Routes>
-      {/* --- Public Routes --- */}
       <Route path="/" element={<Home />} />
       <Route path="/userlogin" element={<UserLogin />} />
       <Route path="/usersignup" element={<UserSignup />} />
@@ -35,19 +32,16 @@ function App() {
 
       {/* --- Protected Routes (Role based security) --- */}
       
-      {/* User Dashboard */}
       <Route 
         path="/userdash" 
         element={isAuthenticated && role === 'user' ? <UserDashboard /> : <Navigate to="/userlogin" />} 
       />
 
-      {/* Admin Dashboard */}
       <Route 
         path="/admindash" 
         element={isAuthenticated && role === 'admin' ? <AdminDashboard /> : <Navigate to="/userlogin" />} 
       />
 
-      {/* Doctor Dashboard */}
       <Route 
         path="/dctrdash" 
         element={isAuthenticated && role === 'doctor' ? <DoctorDashboard /> : <Navigate to="/doclogin" />} 
