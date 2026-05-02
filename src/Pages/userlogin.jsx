@@ -1,23 +1,52 @@
-import React, { useState } from 'react'; // 1. useState add kiya
-import { Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux'; // 2. Redux tools
-import { setLoading, setError } from '../store/slices/authSlice'; 
+import React, { useState, useEffect } from 'react'; 
+import { Link, useNavigate } from 'react-router-dom'; 
+import { useDispatch, useSelector } from 'react-redux';
+import { loginUser, setError, clearError } from '../store/slices/authSlice'; 
 import bg from "../assets/bg.jpeg";
 import logoImg from "../assets/logo.png";
 
 const UserLogin = () => {
-  // --- States for Input ---
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   
   const dispatch = useDispatch();
+  const navigate = useNavigate(); 
   const { loading, error } = useSelector((state) => state.auth);
 
-  const handleLogin = (e) => {
+  // Page load hote hi purane errors saaf karein
+  useEffect(() => {
+    dispatch(clearError());
+  }, [dispatch]);
+
+  const handleLogin = async (e) => {
     e.preventDefault();
-    dispatch(setLoading(true));
-    console.log("Logging in with:", email, password);
-    // Yahan hum baad mein Firebase ka login logic likhenge
+
+    // 1. Validation
+    if (!email.trim() || !password.trim()) {
+      dispatch(setError("Email and Password are required!"));
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      dispatch(setError("Please enter a valid email address."));
+      return;
+    }
+    
+    // 2. API Call
+    const resultAction = await dispatch(loginUser({ email, password }));
+
+    if (loginUser.fulfilled.match(resultAction)) {
+      const role = resultAction.payload.user.role;
+      console.log("Login Success as:", role);
+      
+      // Role based routing
+      if (role === 'admin') {
+        navigate('/admindash');
+      } else {
+        navigate('/userdash');
+      }
+    }
   };
 
   return (
@@ -27,7 +56,6 @@ const UserLogin = () => {
     >
       <div className="w-full max-w-[950px] flex flex-col md:flex-row bg-white/70 backdrop-blur-xl rounded-[40px] shadow-2xl border border-white/80 overflow-hidden">
         
-        {/* LEFT SIDE: Login Form */}
         <div className="w-full md:w-[58%] p-8 md:p-12">
           <div className="mb-8">
             <img src={logoImg} alt="EmoTrack Logo" className="w-44 h-auto object-contain" />
@@ -41,13 +69,18 @@ const UserLogin = () => {
             Continue your journey to better mental health.
           </p>
           
+          {error && (
+            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 text-xs rounded-lg text-center font-bold animate-pulse">
+              {error}
+            </div>
+          )}
+
           <form onSubmit={handleLogin} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input 
               type="email" 
               placeholder="Email Address" 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
               className="md:col-span-2 px-4 py-3 rounded-xl bg-white/60 border border-gray-100 shadow-sm focus:ring-2 focus:ring-blue-400 outline-none text-sm transition-all" 
             />
             
@@ -56,7 +89,6 @@ const UserLogin = () => {
               placeholder="Password" 
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              required
               className="md:col-span-2 px-4 py-3 rounded-xl bg-white/60 border border-gray-100 shadow-sm focus:ring-2 focus:ring-blue-400 outline-none text-sm transition-all" 
             />
             
@@ -83,19 +115,13 @@ const UserLogin = () => {
           </p>
         </div>
 
-        {/* RIGHT SIDE: hidden on small screens (added 'hidden md:flex') */}
         <div className="hidden md:flex w-full md:w-[42%] bg-gradient-to-br from-blue-600/5 to-indigo-600/15 flex-col items-center justify-center p-10 border-l border-white/40 relative text-center">
           <div className="text-8xl mb-6 animate-bounce drop-shadow-lg">😊</div>
           <div className="relative z-10">
               <h3 className="text-2xl font-black text-[#2F357D] tracking-tight">Your Mind Matters</h3>
               <p className="text-[#2F357D] text-sm mt-3 leading-relaxed max-w-[240px] mx-auto font-medium">
-                Quickly access your personal mood tracker, daily insights, and emotional progress.
+                Quickly access your personal mood tracker and emotional progress.
               </p>
-              <div className="mt-10 flex items-center justify-center space-x-2 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                 <div className="h-[1px] w-8 bg-slate-300"></div>
-                 <span>Privacy First</span>
-                 <div className="h-[1px] w-8 bg-slate-300"></div>
-              </div>
           </div>
         </div>
       </div>

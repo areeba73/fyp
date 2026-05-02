@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { setLoading } from '../store/slices/authSlice';
+import { clearError } from '../store/slices/authSlice'; // setLoading hata diya
 import bg from "../assets/bg.jpeg";
 import logoImg from "../assets/logo.png";
 
@@ -17,7 +17,12 @@ const DoctorSignup = () => {
   });
 
   const dispatch = useDispatch();
-  const { loading } = useSelector((state) => state.auth);
+  const { loading, error } = useSelector((state) => state.auth);
+
+  // Page load hote hi purane errors saaf karein
+  useEffect(() => {
+    dispatch(clearError());
+  }, [dispatch]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -25,8 +30,9 @@ const DoctorSignup = () => {
 
   const handleRegister = (e) => {
     e.preventDefault();
-    dispatch(setLoading(true));
+    // dispatch(setLoading(true)); // Ye line error de rahi thi, isay nikal diya
     console.log("Doctor Registering:", formData);
+    alert("Doctor Registration flow will be connected after User testing!");
   };
 
   return (
@@ -46,6 +52,13 @@ const DoctorSignup = () => {
             <span className="text-[#2F357D]">EmoTrack</span>
             <span className="text-[#5390F5] block md:inline font-bold"> as a Doctor</span>
           </h2>
+
+          {/* Error Message Display */}
+          {error && (
+            <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 text-xs rounded-lg text-center font-bold">
+              {error}
+            </div>
+          )}
           
           <form onSubmit={handleRegister} className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
             <input name="fullName" onChange={handleChange} type="text" placeholder="Full Name" required className="w-full px-4 py-3 rounded-xl bg-white/60 border border-gray-100 outline-none text-sm transition-all focus:ring-2 focus:ring-blue-400" />
@@ -73,7 +86,7 @@ const DoctorSignup = () => {
           </p>
         </div>
 
-        {/* RIGHT SIDE: hidden on mobile */}
+        {/* RIGHT SIDE */}
         <div className="hidden md:flex w-full md:w-[42%] bg-gradient-to-br from-blue-600/5 to-indigo-600/15 flex-col items-center justify-center p-10 border-l border-white/40 relative">
           <div className="relative group">
             <div className="absolute -inset-3 bg-blue-400/10 rounded-full blur-xl"></div>

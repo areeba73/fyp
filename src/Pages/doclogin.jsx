@@ -1,7 +1,7 @@
-import React, { useState } from 'react'; // State add ki
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react'; 
+import { Link, useNavigate } from 'react-router-dom'; 
 import { useDispatch, useSelector } from 'react-redux';
-import { setLoading } from '../store/slices/authSlice';
+import { loginUser, setError, clearError } from '../store/slices/authSlice'; 
 import bg from "../assets/bg.jpeg";
 import logoImg from "../assets/logo.png";
 
@@ -10,12 +10,37 @@ const DoctorLogin = () => {
   const [password, setPassword] = useState('');
   
   const dispatch = useDispatch();
-  const { loading } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+  const { loading, error } = useSelector((state) => state.auth);
 
-  const handleLogin = (e) => {
+  // Component load hote hi purane errors clear karein
+  useEffect(() => {
+    dispatch(clearError());
+  }, [dispatch]);
+
+  const handleLogin = async (e) => {
     e.preventDefault();
-    dispatch(setLoading(true));
-    console.log("Doctor Login:", email, password);
+
+    // 1. Basic Validation
+    if (!email.trim() || !password.trim()) {
+      dispatch(setError("Email and Password are required!"));
+      return;
+    }
+
+    // 2. Call Login Thunk
+    const resultAction = await dispatch(loginUser({ email, password }));
+
+    if (loginUser.fulfilled.match(resultAction)) {
+      const role = resultAction.payload.user.role;
+      
+      // Agar login karne wala doctor hai toh dctrdash par bhejien
+      if (role === 'doctor') {
+        navigate('/dctrdash');
+      } else {
+        // Agar koi user doctor login page use kare
+        navigate('/userdash');
+      }
+    }
   };
 
   return (
@@ -38,6 +63,13 @@ const DoctorLogin = () => {
           <p className="text-[#2F357D] text-sm mb-8 font-medium tracking-wide">
             Smart patient tracking & healthcare management
           </p>
+
+          {/* Error Message Display */}
+          {error && (
+            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 text-xs rounded-lg text-center font-bold animate-pulse">
+              {error}
+            </div>
+          )}
           
           <form onSubmit={handleLogin} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input 
@@ -45,7 +77,6 @@ const DoctorLogin = () => {
               placeholder="Email Address" 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
               className="md:col-span-2 px-4 py-3 rounded-xl bg-white/60 border border-gray-100 shadow-sm focus:ring-2 focus:ring-blue-400 outline-none text-sm transition-all" 
             />
             <input 
@@ -53,7 +84,6 @@ const DoctorLogin = () => {
               placeholder="Password" 
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              required
               className="md:col-span-2 px-4 py-3 rounded-xl bg-white/60 border border-gray-100 shadow-sm focus:ring-2 focus:ring-blue-400 outline-none text-sm transition-all" 
             />
             
@@ -68,7 +98,7 @@ const DoctorLogin = () => {
               disabled={loading}
               className="md:col-span-2 w-full py-4 bg-[#2F357D] hover:bg-blue-700 text-white rounded-xl font-bold shadow-xl shadow-blue-200 transition-all active:scale-95 mt-2 disabled:opacity-70"
             >
-              {loading ? "Logging in..." : "Login"}
+              {loading ? "Logging in..." : "Login Now"}
             </button>
           </form>
 
@@ -80,7 +110,7 @@ const DoctorLogin = () => {
           </p>
         </div>
 
-        {/* RIGHT SIDE: Added hidden md:flex */}
+        {/* RIGHT SIDE */}
         <div className="hidden md:flex w-full md:w-[42%] bg-gradient-to-br from-blue-600/5 to-indigo-600/15 flex-col items-center justify-center p-10 border-l border-white/40 relative">
           <div className="relative group">
             <div className="absolute -inset-3 bg-blue-400/10 rounded-full blur-xl"></div>
@@ -88,8 +118,8 @@ const DoctorLogin = () => {
             <div className="absolute bottom-8 right-6 bg-green-400 w-6 h-6 rounded-full border-4 border-white shadow-lg animate-pulse"></div>
           </div>
           <div className="mt-10 text-center relative z-10">
-             <h3 className="text-2xl font-black text-[#2F357D] tracking-tight">Premium Healthcare</h3>
-             <p className="text-slate-500 text-sm mt-3 leading-relaxed max-w-[240px] mx-auto font-medium">Join 500+ professionals managing health data with end-to-end security.</p>
+              <h3 className="text-2xl font-black text-[#2F357D] tracking-tight">Premium Healthcare</h3>
+              <p className="text-slate-500 text-sm mt-3 leading-relaxed max-w-[240px] mx-auto font-medium">Join 500+ professionals managing health data with end-to-end security.</p>
           </div>
         </div>
       </div>

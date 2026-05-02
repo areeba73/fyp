@@ -1,24 +1,63 @@
-import React, { useState } from 'react'; // State add ki
-import { Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux'; // Redux hooks
-import { setLoading } from '../store/slices/authSlice';
+import React, { useState } from 'react'; 
+import { Link, useNavigate } from 'react-router-dom'; 
+import { useDispatch, useSelector } from 'react-redux'; 
+import { useEffect } from 'react';
+import { clearError } from '../store/slices/authSlice';
+import { registerUser, setError } from '../store/slices/authSlice'; 
 import bg from "../assets/bg.jpeg";
 import logoImg from "../assets/logo.png";
 
 const UserSignup = () => {
-  // --- States for Signup Fields ---
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const dispatch = useDispatch();
-  const { loading } = useSelector((state) => state.auth);
+  const navigate = useNavigate(); 
+  const { loading, error } = useSelector((state) => state.auth);
+  
+  useEffect(() => {
+  dispatch(clearError());
+}, [dispatch]);
 
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
-    dispatch(setLoading(true));
-    console.log("Signing up:", { fullName, email, password });
-    // Baad mein yahan Firebase logic aayega
+
+    // --- FRONTEND VALIDATION START ---
+    
+    // 1. Check for empty fields
+    if (!fullName.trim() || !email.trim() || !password.trim()) {
+      dispatch(setError("Please fill in all fields."));
+      return; // Function yahi ruk jayega
+    }
+
+    // 2. Email format validation (Regex)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      dispatch(setError("Please enter a valid email address."));
+      return;
+    }
+
+    // 3. Password length validation
+    if (password.length < 6) {
+      dispatch(setError("Password must be at least 6 characters long."));
+      return;
+    }
+
+    // --- FRONTEND VALIDATION END ---
+
+    // Agar validation pass ho jaye, tab dispatch karein
+    const resultAction = await dispatch(registerUser({ fullName, email, password }));
+
+    if (registerUser.fulfilled.match(resultAction)) {
+      alert("Account created! Please check your email for verification.");
+      setFullName('');
+      setEmail('');
+      setPassword('');
+      navigate('/userlogin'); 
+    } else {
+      console.error("Signup failed:", resultAction.payload);
+    }
   };
 
   return (
@@ -28,7 +67,6 @@ const UserSignup = () => {
     >
       <div className="w-full max-w-[950px] flex flex-col md:flex-row bg-white/70 backdrop-blur-xl rounded-[40px] shadow-2xl border border-white/80 overflow-hidden">
         
-        {/* LEFT SIDE: Signup Form */}
         <div className="w-full md:w-[58%] p-8 md:p-12">
           <div className="mb-8">
             <img src={logoImg} alt="EmoTrack Logo" className="w-44 h-auto object-contain" />
@@ -43,13 +81,19 @@ const UserSignup = () => {
             Start tracking your emotions and progress today.
           </p>
           
+          {/* Error Message Display */}
+          {error && (
+            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 text-xs rounded-lg text-center font-bold animate-pulse">
+              {error}
+            </div>
+          )}
+
           <form onSubmit={handleSignup} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input 
               type="text" 
               placeholder="Full Name" 
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              required
               className="md:col-span-2 w-full px-4 py-3 rounded-xl bg-white/60 border border-gray-100 shadow-sm focus:ring-2 focus:ring-blue-400 outline-none text-sm transition-all" 
             />
             
@@ -58,25 +102,23 @@ const UserSignup = () => {
               placeholder="Email Address" 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
               className="md:col-span-2 px-4 py-3 rounded-xl bg-white/60 border border-gray-100 shadow-sm focus:ring-2 focus:ring-blue-400 outline-none text-sm transition-all" 
             />
             
             <input 
               type="password" 
-              placeholder="Password" 
+              placeholder="Password (Min 6 chars)" 
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              required
               className="md:col-span-2 px-4 py-3 rounded-xl bg-white/60 border border-gray-100 shadow-sm focus:ring-2 focus:ring-blue-400 outline-none text-sm transition-all" 
             />
             
             <button 
               type="submit"
               disabled={loading}
-              className="md:col-span-2 w-full py-4 bg-[#2F357D] hover:bg-white text-white hover:text-black rounded-xl font-bold shadow-xl shadow-blue-200 transition-all active:scale-95 mt-2 disabled:opacity-70"
+              className="md:col-span-2 w-full py-4 bg-[#2F357D] hover:bg-blue-700 text-white rounded-xl font-bold shadow-xl shadow-blue-200 transition-all active:scale-95 mt-2 disabled:opacity-70"
             >
-              {loading ? "Creating Account..." : "Create Account"}
+              {loading ? "Checking..." : "Create Account"}
             </button>
           </form>
 
@@ -88,7 +130,6 @@ const UserSignup = () => {
           </p>
         </div>
 
-        {/* RIGHT SIDE: hidden on mobile screens */}
         <div className="hidden md:flex w-full md:w-[42%] bg-gradient-to-br from-blue-600/5 to-indigo-600/15 flex flex-col items-center justify-center p-10 border-l border-white/40 relative text-center">
           <div className="text-8xl mb-6 animate-bounce drop-shadow-lg">😊</div>
           <div className="relative z-10">
@@ -96,11 +137,6 @@ const UserSignup = () => {
               <p className="text-[#2F357D] text-sm mt-3 leading-relaxed max-w-[240px] mx-auto font-medium">
                 Quickly access your personal mood tracker, daily insights, and emotional progress.
               </p>
-              <div className="mt-10 flex items-center justify-center space-x-2 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                 <div className="h-[1px] w-8 bg-slate-300"></div>
-                 <span>Privacy First</span>
-                 <div className="h-[1px] w-8 bg-slate-300"></div>
-              </div>
           </div>
         </div>
       </div>
