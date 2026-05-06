@@ -1,9 +1,7 @@
-import React, { useState } from 'react'; 
+import React, { useState, useEffect } from 'react'; 
 import { Link, useNavigate } from 'react-router-dom'; 
 import { useDispatch, useSelector } from 'react-redux'; 
-import { useEffect } from 'react';
-import { clearError } from '../store/slices/authSlice';
-import { registerUser, setError } from '../store/slices/authSlice'; 
+import { clearError, registerUser, setError } from '../store/slices/authSlice'; 
 import bg from "../assets/bg.jpeg";
 import logoImg from "../assets/logo.png";
 
@@ -17,8 +15,8 @@ const UserSignup = () => {
   const { loading, error } = useSelector((state) => state.auth);
   
   useEffect(() => {
-  dispatch(clearError());
-}, [dispatch]);
+    dispatch(clearError());
+  }, [dispatch]);
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -28,7 +26,7 @@ const UserSignup = () => {
     // 1. Check for empty fields
     if (!fullName.trim() || !email.trim() || !password.trim()) {
       dispatch(setError("Please fill in all fields."));
-      return; // Function yahi ruk jayega
+      return;
     }
 
     // 2. Email format validation (Regex)

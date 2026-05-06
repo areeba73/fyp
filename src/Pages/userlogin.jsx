@@ -32,6 +32,11 @@ const UserLogin = () => {
       dispatch(setError("Please enter a valid email address."));
       return;
     }
+
+    if (password.length < 6) {
+      dispatch(setError("Password must be at least 6 characters!"));
+      return;
+    }
     
     // 2. API Call
     const resultAction = await dispatch(loginUser({ email, password }));

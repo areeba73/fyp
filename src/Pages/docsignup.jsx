@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { clearError } from '../store/slices/authSlice'; // setLoading hata diya
+import { registerDoctor, clearError, setError } from '../store/slices/authSlice';
 import bg from "../assets/bg.jpeg";
 import logoImg from "../assets/logo.png";
 
 const DoctorSignup = () => {
-  // Doctor specific states
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: '',
     speciality: '',
     clinicName: '',
-    experience: '',
+    mobile: '',
     email: '',
     password: ''
   });
@@ -19,7 +19,6 @@ const DoctorSignup = () => {
   const dispatch = useDispatch();
   const { loading, error } = useSelector((state) => state.auth);
 
-  // Page load hote hi purane errors saaf karein
   useEffect(() => {
     dispatch(clearError());
   }, [dispatch]);
@@ -28,11 +27,68 @@ const DoctorSignup = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
-    // dispatch(setLoading(true)); // Ye line error de rahi thi, isay nikal diya
-    console.log("Doctor Registering:", formData);
-    alert("Doctor Registration flow will be connected after User testing!");
+
+    // --- VALIDATION START ---
+    
+    // 1. Check for empty fields
+    if (!formData.fullName.trim() || !formData.email.trim() || !formData.password.trim() || !formData.speciality.trim() || !formData.clinicName.trim() || !formData.mobile.trim()) {
+      dispatch(setError("All fields are required!"));
+      return;
+    }
+
+    // 2. Full Name validation (min 3 chars)
+    if (formData.fullName.trim().length < 3) {
+      dispatch(setError("Full name must be at least 3 characters!"));
+      return;
+    }
+
+    // 3. Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      dispatch(setError("Please enter a valid email address!"));
+      return;
+    }
+
+    // 4. Password validation (min 6 chars)
+    if (formData.password.length < 6) {
+      dispatch(setError("Password must be at least 6 characters!"));
+      return;
+    }
+
+    // 5. Mobile validation (11 digits - Pakistani format)
+    // Accept: 03001234567 or 923001234567 or 03-00-123-4567
+    const mobileRegex = /^(0\d{10}|92\d{10})$/; // 03XXXXXXXXX or 923XXXXXXXXX
+    const mobileClean = formData.mobile.replace(/[-\s]/g, ''); // Remove dashes and spaces
+    
+    if (!mobileRegex.test(mobileClean)) {
+      dispatch(setError("Please enter a valid 11-digit mobile number (e.g., 03001234567)!"));
+      return;
+    }
+
+    // 6. Speciality validation (min 3 chars)
+    if (formData.speciality.trim().length < 3) {
+      dispatch(setError("Speciality must be at least 3 characters!"));
+      return;
+    }
+
+    // 7. Clinic name validation (min 3 chars)
+    if (formData.clinicName.trim().length < 3) {
+      dispatch(setError("Clinic name must be at least 3 characters!"));
+      return;
+    }
+
+    // --- VALIDATION END ---
+
+    const resultAction = await dispatch(registerDoctor(formData));
+
+    if (registerDoctor.fulfilled.match(resultAction)) {
+      alert("Doctor Account created! Please check email for verification.");
+      navigate('/doclogin'); 
+    } else {
+      console.log("Registration failed");
+    }
   };
 
   return (
@@ -53,7 +109,6 @@ const DoctorSignup = () => {
             <span className="text-[#5390F5] block md:inline font-bold"> as a Doctor</span>
           </h2>
 
-          {/* Error Message Display */}
           {error && (
             <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 text-xs rounded-lg text-center font-bold">
               {error}
@@ -61,13 +116,60 @@ const DoctorSignup = () => {
           )}
           
           <form onSubmit={handleRegister} className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-            <input name="fullName" onChange={handleChange} type="text" placeholder="Full Name" required className="w-full px-4 py-3 rounded-xl bg-white/60 border border-gray-100 outline-none text-sm transition-all focus:ring-2 focus:ring-blue-400" />
-            <input name="speciality" onChange={handleChange} type="text" placeholder="Speciality" required className="w-full px-4 py-3 rounded-xl bg-white/60 border border-gray-100 outline-none text-sm transition-all focus:ring-2 focus:ring-blue-400" />
-            <input name="clinicName" onChange={handleChange} type="text" placeholder="Clinic Name" required className="w-full px-4 py-3 rounded-xl bg-white/60 border border-gray-100 outline-none text-sm transition-all focus:ring-2 focus:ring-blue-400" />
-            <input name="experience" onChange={handleChange} type="text" placeholder="Experience" required className="w-full px-4 py-3 rounded-xl bg-white/60 border border-gray-100 outline-none text-sm transition-all focus:ring-2 focus:ring-blue-400" />
-            
-            <input name="email" onChange={handleChange} type="email" placeholder="Email Address" required className="px-4 py-3 rounded-xl bg-white/60 border border-gray-100 outline-none text-sm focus:ring-2 focus:ring-blue-400" />
-            <input name="password" onChange={handleChange} type="password" placeholder="Password" required className="px-4 py-3 rounded-xl bg-white/60 border border-gray-100 outline-none text-sm focus:ring-2 focus:ring-blue-400" />
+            <input 
+              name="fullName" 
+              onChange={handleChange} 
+              value={formData.fullName}
+              type="text" 
+              placeholder="Full Name" 
+              required 
+              className="w-full px-4 py-3 rounded-xl bg-white/60 border border-gray-100 outline-none text-sm transition-all focus:ring-2 focus:ring-blue-400" 
+            />
+            <input 
+              name="speciality" 
+              onChange={handleChange} 
+              value={formData.speciality}
+              type="text" 
+              placeholder="Speciality (e.g., phsycology)" 
+              required 
+              className="w-full px-4 py-3 rounded-xl bg-white/60 border border-gray-100 outline-none text-sm transition-all focus:ring-2 focus:ring-blue-400" 
+            />
+            <input 
+              name="clinicName" 
+              onChange={handleChange} 
+              value={formData.clinicName}
+              type="text" 
+              placeholder="Clinic Name" 
+              required 
+              className="w-full px-4 py-3 rounded-xl bg-white/60 border border-gray-100 outline-none text-sm transition-all focus:ring-2 focus:ring-blue-400" 
+            />
+            <input 
+              name="mobile" 
+              onChange={handleChange} 
+              value={formData.mobile}
+              type="tel" 
+              placeholder="Mobile (03001234567)" 
+              required 
+              className="w-full px-4 py-3 rounded-xl bg-white/60 border border-gray-100 outline-none text-sm transition-all focus:ring-2 focus:ring-blue-400" 
+            />            
+            <input 
+              name="email" 
+              onChange={handleChange} 
+              value={formData.email}
+              type="email" 
+              placeholder="Email Address" 
+              required 
+              className="w-full px-4 py-3 rounded-xl bg-white/60 border border-gray-100 outline-none text-sm focus:ring-2 focus:ring-blue-400" 
+            />
+            <input 
+              name="password" 
+              onChange={handleChange} 
+              value={formData.password}
+              type="password" 
+              placeholder="Password (Min 6 chars)" 
+              required 
+              className="w-full px-4 py-3 rounded-xl bg-white/60 border border-gray-100 outline-none text-sm focus:ring-2 focus:ring-blue-400" 
+            />
             
             <button 
               type="submit"
@@ -86,17 +188,12 @@ const DoctorSignup = () => {
           </p>
         </div>
 
-        {/* RIGHT SIDE */}
         <div className="hidden md:flex w-full md:w-[42%] bg-gradient-to-br from-blue-600/5 to-indigo-600/15 flex-col items-center justify-center p-10 border-l border-white/40 relative">
-          <div className="relative group">
-            <div className="absolute -inset-3 bg-blue-400/10 rounded-full blur-xl"></div>
-            <img src="https://img.freepik.com/free-vector/doctor-character-background_1270-84.jpg" alt="doctor" className="relative w-48 h-48 rounded-full object-cover border-[8px] border-white shadow-2xl transition-transform duration-500 group-hover:scale-105" />
-            <div className="absolute bottom-8 right-6 bg-green-400 w-6 h-6 rounded-full border-4 border-white shadow-lg animate-pulse"></div>
-          </div>
-          <div className="mt-10 text-center relative z-10">
-             <h3 className="text-2xl font-black text-[#2F357D] tracking-tight">Premium Healthcare</h3>
-             <p className="text-slate-500 text-sm mt-3 leading-relaxed max-w-[240px] mx-auto font-medium">Join 500+ professionals managing health data with end-to-end security.</p>
-          </div>
+           <img src="https://img.freepik.com/free-vector/doctor-character-background_1270-84.jpg" alt="doctor" className="w-48 h-48 rounded-full object-cover border-[8px] border-white shadow-2xl" />
+           <div className="mt-10 text-center">
+              <h3 className="text-2xl font-black text-[#2F357D]">Premium Healthcare</h3>
+              <p className="text-slate-500 text-sm mt-3">Join professionals managing health data securely.</p>
+           </div>
         </div>
       </div>
     </div>

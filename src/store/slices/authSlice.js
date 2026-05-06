@@ -1,51 +1,68 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import api from '../../api';
 
-// --- 1. Signup Thunk ---
+// --- 1. User Signup Thunk ---
 export const registerUser = createAsyncThunk(
   'auth/registerUser',
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await fetch('http://localhost:5000/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userData),
-      });
-
-      const data = await response.json();
-      if (!response.ok) return rejectWithValue(data.error);
-      return data; 
+      // Endpoint: /user/signup (url_prefix already adds /user)
+      const response = await api.post('/user/signup', userData);
+      return response.data; 
     } catch (error) {
-      return rejectWithValue("Server connection failed!");
+      return rejectWithValue(error.response?.data?.error || "Server connection failed!");
     }
   }
 );
 
-// --- 2. Login Thunk ---
+// --- 2. User Login Thunk ---
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async (credentials, { rejectWithValue }) => {
     try {
-      const response = await fetch('http://localhost:5000/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(credentials),
-      });
-      
-      const data = await response.json();
-      if (!response.ok) return rejectWithValue(data.error);
-
-      // Token ya user data ko localStorage mein save karna taake refresh par data na jaye
+      // Endpoint: /user/login
+      const response = await api.post('/user/login', credentials);
+      const data = response.data;
       localStorage.setItem('user', JSON.stringify(data.user));
       localStorage.setItem('token', data.token || ''); 
-
       return data;
     } catch (error) {
-      return rejectWithValue("Login failed! Please check your connection.");
+      return rejectWithValue(error.response?.data?.error || "Login failed!");
     }
   }
 );
 
-// Initial State (LocalStorage se check kar rahe hain taake refresh par user login rahe)
+// --- 3. Doctor Signup Thunk ---
+export const registerDoctor = createAsyncThunk(
+  'auth/registerDoctor',
+  async (doctorData, { rejectWithValue }) => {
+    try {
+      // Endpoint: /doctor/signup
+      const response = await api.post('/doctor/signup', doctorData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.error || "Doctor registration failed!");
+    }
+  }
+);
+
+// --- 4. Doctor Login Thunk ---
+export const loginDoctor = createAsyncThunk(
+  'auth/loginDoctor',
+  async (credentials, { rejectWithValue }) => {
+    try {
+      // Endpoint: /doctor/login
+      const response = await api.post('/doctor/login', credentials);
+      const data = response.data;
+      localStorage.setItem('user', JSON.stringify(data.user));
+      localStorage.setItem('token', data.token || ''); 
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.error || "Doctor login failed!");
+    }
+  }
+);
+
 const savedUser = JSON.parse(localStorage.getItem('user'));
 
 const initialState = {
@@ -68,7 +85,6 @@ const authSlice = createSlice({
       localStorage.removeItem('user');
       localStorage.removeItem('token');
     },
-    // Iska maqsad ye hai ke jab user page switch kare toh purana error khatam ho jaye
     clearError: (state) => {
       state.error = null;
     },
@@ -78,34 +94,46 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Register
-      .addCase(registerUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(registerUser.fulfilled, (state) => {
-        state.loading = false;
-      })
-      .addCase(registerUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
-      // Login
-      .addCase(loginUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(loginUser.fulfilled, (state, action) => {
-        state.loading = false;
-        state.isAuthenticated = true;
-        state.user = action.payload.user;
-        state.role = action.payload.user.role; // Backend se user object mein role aa raha hai
-        state.error = null;
-      })
-      .addCase(loginUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      });
+      // Register (Common for all)
+      .addMatcher(
+        (action) => action.type.endsWith('/pending') && action.type.includes('register'),
+        (state) => {
+          state.loading = true;
+          state.error = null;
+        }
+      )
+      .addMatcher(
+        (action) => action.type.endsWith('/fulfilled') && action.type.includes('register'),
+        (state) => {
+          state.loading = false;
+        }
+      )
+      // Login (Common for all)
+      .addMatcher(
+        (action) => action.type.endsWith('/pending') && action.type.includes('login'),
+        (state) => {
+          state.loading = true;
+          state.error = null;
+        }
+      )
+      .addMatcher(
+        (action) => action.type.endsWith('/fulfilled') && action.type.includes('login'),
+        (state, action) => {
+          state.loading = false;
+          state.isAuthenticated = true;
+          state.user = action.payload.user;
+          state.role = action.payload.user.role; 
+          state.error = null;
+        }
+      )
+      // Generic Rejected Case
+      .addMatcher(
+        (action) => action.type.endsWith('/rejected'),
+        (state, action) => {
+          state.loading = false;
+          state.error = action.payload;
+        }
+      );
   },
 });
 
