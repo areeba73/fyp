@@ -1,6 +1,23 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../api';
 
+// Fetch admin profile
+export const fetchAdminProfile = createAsyncThunk(
+  'admin/fetchProfile',
+  async (adminId, { rejectWithValue }) => {
+    try {
+      const response = await api.get('/admin/profile', {
+        headers: {
+          'X-Admin-ID': adminId
+        }
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.error || "Failed to fetch profile");
+    }
+  }
+);
+
 // Fetch all users
 export const fetchUsers = createAsyncThunk(
   'admin/fetchUsers',
@@ -53,7 +70,7 @@ export const deleteDoctor = createAsyncThunk(
   }
 );
 
-// Fetch admin stats
+// Fetch stats
 export const fetchStats = createAsyncThunk(
   'admin/fetchStats',
   async (_, { rejectWithValue }) => {
@@ -66,20 +83,31 @@ export const fetchStats = createAsyncThunk(
   }
 );
 
-// Update admin settings
-export const updateAdminSettings = createAsyncThunk(
-  'admin/updateSettings',
-  async (settingsData, { rejectWithValue }) => {
+// Update admin profile
+export const updateAdminProfile = createAsyncThunk(
+  'admin/updateProfile',
+  async ({ adminId, profileData }, { rejectWithValue }) => {
     try {
-      const response = await api.post('/admin/settings', settingsData);
+      const response = await api.post('/admin/profile', profileData, {
+        headers: {
+          'X-Admin-ID': adminId
+        }
+      });
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.error || "Failed to update settings");
+      return rejectWithValue(error.response?.data?.error || "Failed to update profile");
     }
   }
 );
 
 const initialState = {
+  adminProfile: {
+    adminId: null,
+    name: "Admin",
+    email: "admin@healthcare.com",
+    twoFactor: false,
+    notifications: true
+  },
   users: [],
   doctors: [],
   stats: {
@@ -89,14 +117,7 @@ const initialState = {
     databaseLoad: "12%"
   },
   loading: false,
-  error: null,
-  adminData: {
-    name: "Admin",
-    email: "admin@healthcare.com",
-    password: "Admin@123",
-    twoFactor: true,
-    notifications: true
-  }
+  error: null
 };
 
 const adminSlice = createSlice({
@@ -105,39 +126,32 @@ const adminSlice = createSlice({
   reducers: {
     clearError: (state) => {
       state.error = null;
-    },
-    setError: (state, action) => {
-      state.error = action.payload;
     }
   },
   extraReducers: (builder) => {
     builder
-      // Fetch Users
-      .addCase(fetchUsers.pending, (state) => {
+      // Fetch Admin Profile
+      .addCase(fetchAdminProfile.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchUsers.fulfilled, (state, action) => {
+      .addCase(fetchAdminProfile.fulfilled, (state, action) => {
         state.loading = false;
-        state.users = action.payload;
+        state.adminProfile = action.payload;
       })
-      .addCase(fetchUsers.rejected, (state, action) => {
+      .addCase(fetchAdminProfile.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
       
+      // Fetch Users
+      .addCase(fetchUsers.fulfilled, (state, action) => {
+        state.users = action.payload;
+      })
+      
       // Fetch Doctors
-      .addCase(fetchDoctors.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
       .addCase(fetchDoctors.fulfilled, (state, action) => {
-        state.loading = false;
         state.doctors = action.payload;
-      })
-      .addCase(fetchDoctors.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
       })
       
       // Delete User
@@ -151,20 +165,16 @@ const adminSlice = createSlice({
       })
       
       // Fetch Stats
-      .addCase(fetchStats.pending, (state) => {
-        state.loading = true;
-      })
       .addCase(fetchStats.fulfilled, (state, action) => {
-        state.loading = false;
         state.stats = action.payload;
       })
       
-      // Update Settings
-      .addCase(updateAdminSettings.fulfilled, (state, action) => {
-        state.adminData = action.payload;
+      // Update Profile
+      .addCase(updateAdminProfile.fulfilled, (state, action) => {
+        state.adminProfile = { ...state.adminProfile, ...action.payload };
       });
   }
 });
 
-export const { clearError, setError } = adminSlice.actions;
+export const { clearError } = adminSlice.actions;
 export default adminSlice.reducer;

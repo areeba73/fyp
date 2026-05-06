@@ -1,37 +1,47 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchUsers, fetchDoctors, deleteUser, deleteDoctor, fetchStats, updateAdminSettings } from '../store/slices/adminSlice';
+import { logout } from '../store/slices/authSlice';  
+import { useNavigate } from 'react-router-dom'; 
+import { 
+  fetchAdminProfile,
+  fetchUsers, 
+  fetchDoctors, 
+  deleteUser, 
+  deleteDoctor, 
+  fetchStats,
+  updateAdminProfile 
+} from '../store/slices/adminSlice';
 import bg from "../assets/bg.jpeg";
 import { Link } from 'react-router-dom'; 
 import logo from '../assets/logo.png'; 
 import { LogOut } from 'lucide-react'; 
-import { logout } from '../store/slices/authSlice';  
-import { useNavigate } from 'react-router-dom'; 
 
 const AdminDashboard = () => {
   const dispatch = useDispatch();
-   const navigate = useNavigate();
-  const { users, doctors, stats, loading, error } = useSelector(state => state.admin);
+  const navigate = useNavigate();
+  const { user } = useSelector(state => state.auth);
+  const { adminProfile, users, doctors, stats, loading, error } = useSelector(state => state.admin);
   
   const [activeTab, setActiveTab] = useState('users');
   const [activeView, setActiveView] = useState('dashboard');
   const [searchQuery, setSearchQuery] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [adminData, setAdminData] = useState(adminProfile);
 
-  const [adminData, setAdminData] = useState({
-    name: "Admin",
-    email: "admin@healthcare.com",
-    password: "Admin@123",
-    twoFactor: true,
-    notifications: true
-  });
-
-  // Fetch data on mount
+  // Fetch admin profile on mount
   useEffect(() => {
-    dispatch(fetchUsers());
-    dispatch(fetchDoctors());
-    dispatch(fetchStats());
-  }, [dispatch]);
+    if (user?.uid) {
+      dispatch(fetchAdminProfile(user.uid));
+      dispatch(fetchUsers());
+      dispatch(fetchDoctors());
+      dispatch(fetchStats());
+    }
+  }, [dispatch, user]);
+
+  // Update local state when profile loads
+  useEffect(() => {
+    setAdminData(adminProfile);
+  }, [adminProfile]);
 
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to remove this record?")) {
@@ -43,7 +53,7 @@ const AdminDashboard = () => {
     }
   };
 
-const handleLogout = () => {  
+  const handleLogout = () => {  
     if (window.confirm("Are you sure you want to logout?")) {
       dispatch(logout());
       navigate('/');
@@ -51,7 +61,15 @@ const handleLogout = () => {
   };
 
   const handleSaveSettings = () => {
-    dispatch(updateAdminSettings(adminData)).then(() => {
+    dispatch(updateAdminProfile({
+      adminId: user.uid,
+      profileData: {
+        name: adminData.name,
+        email: adminData.email,
+        twoFactor: adminData.twoFactor,
+        notifications: adminData.notifications
+      }
+    })).then(() => {
       alert('Settings Updated Successfully!');
       setActiveView('dashboard');
     });
@@ -82,7 +100,7 @@ const handleLogout = () => {
         <div className="bg-white/40 rounded-[2rem] p-8 mb-10 border border-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-6">
             <div className="w-20 h-20 rounded-full bg-[#2F357D] flex items-center justify-center font-bold text-white text-3xl shadow-lg border-4 border-white">
-              {adminData.name.charAt(0)}
+              {adminData.name.charAt(0).toUpperCase()}
             </div>
             <div>
               <p className="text-sm font-medium text-blue">System Control,</p>
@@ -218,23 +236,30 @@ const handleLogout = () => {
                     />
                   </div>
 
-                  <div className="relative">
-                    <label className="text-xs font-bold text-blue-900/60 ml-2 uppercase tracking-widest">Current Password</label>
-                    <div className="relative">
-                      <input 
-                        type={showPassword ? "text" : "password"} 
-                        value={adminData.password}
-                        onChange={(e) => setAdminData({...adminData, password: e.target.value})}
-                        className="w-full mt-1 px-5 py-4 bg-blue-50 border border-blue-100 rounded-2xl font-bold text-blue-950 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                      />
-                      <button 
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-5 top-1/2 -translate-y-1/2 text-blue-400 hover:text-blue-600"
-                      >
-                        {showPassword ? "👁️" : "👁️‍🗨️"}
-                      </button>
+                  <div className="flex items-center justify-between p-4 bg-blue-50 rounded-2xl border border-blue-100">
+                    <div>
+                      <label className="text-xs font-bold text-blue-900 uppercase tracking-widest">Two Factor Authentication</label>
+                      <p className="text-[10px] text-blue-600 mt-1">Extra security for your account</p>
                     </div>
+                    <input 
+                      type="checkbox" 
+                      checked={adminData.twoFactor}
+                      onChange={(e) => setAdminData({...adminData, twoFactor: e.target.checked})}
+                      className="w-5 h-5 cursor-pointer"
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 bg-blue-50 rounded-2xl border border-blue-100">
+                    <div>
+                      <label className="text-xs font-bold text-blue-900 uppercase tracking-widest">Email Notifications</label>
+                      <p className="text-[10px] text-blue-600 mt-1">Get alerts about system activity</p>
+                    </div>
+                    <input 
+                      type="checkbox" 
+                      checked={adminData.notifications}
+                      onChange={(e) => setAdminData({...adminData, notifications: e.target.checked})}
+                      className="w-5 h-5 cursor-pointer"
+                    />
                   </div>
 
                   <div className="pt-6 space-y-4">
@@ -283,7 +308,7 @@ const handleLogout = () => {
         </div>
       </main>
 
-       <button 
+      <button 
         onClick={handleLogout}  
         className="fixed bottom-8 right-8 z-50 flex items-center gap-2 bg-white/90 hover:bg-red-500 hover:text-white text-red-600 px-6 py-3 rounded-full font-bold transition-all border border-red-500/20 shadow-2xl group"
       >
