@@ -66,7 +66,7 @@ function App() {
       {/* ADMIN ROUTES - Sirf Admin access kar sakte hain */}
       <Route 
         path="/admindash" 
-        element={isAuthenticated && role === 'admin' ? <AdminDashboard /> : <Navigate to="/" />} 
+        element={isAuthenticated && role === 'admin' ? <AdminDashboard /> : <Navigate to="/userlogin" />} 
       />
 
       {/* FALLBACK */}
