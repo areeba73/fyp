@@ -16,43 +16,60 @@ import AdminDashboard from './Pages/admindash';
 import DoctorDashboard from './Pages/dctrdash';
 
 function App() {
-  // Redux se status lena security ke liye zaroori hai
   const { isAuthenticated, role } = useSelector((state) => state.auth);
 
   return (
     <Routes>
+      {/* ===== PUBLIC ROUTES ===== */}
       <Route path="/" element={<Home />} />
+      
+      {/* LOGIN & SIGNUP ROUTES */}
       <Route path="/userlogin" element={<UserLogin />} />
       <Route path="/usersignup" element={<UserSignup />} />
       <Route path="/doclogin" element={<DoctorLogin />} />
       <Route path="/docsignup" element={<DoctorSignup />} />
       <Route path="/forget" element={<ForgotPassword />} />
       <Route path="/reset" element={<ResetPassword />} />
-      <Route path="/doctors" element={<Doctors />} />
 
-      {/* --- Protected Routes (Role based security) --- */}
+      {/* ===== PROTECTED ROUTES (Role-based) ===== */}
       
+      {/* USER ROUTES */}
       <Route 
         path="/userdash" 
-        element={isAuthenticated && role === 'user' ? <UserDashboard /> : <Navigate to="/userlogin" />} 
+        element={isAuthenticated && (role === 'user' || role === 'admin') ? <UserDashboard /> : <Navigate to="/userlogin" />} 
       />
-
       <Route 
-        path="/admindash" 
-        element={isAuthenticated && role === 'admin' ? <AdminDashboard /> : <Navigate to="/userlogin" />} 
+        path="/chatbot" 
+        element={isAuthenticated && (role === 'user' || role === 'admin') ? <Chatbot /> : <Navigate to="/userlogin" />} 
+      />
+      <Route 
+        path="/result" 
+        element={isAuthenticated && (role === 'user' || role === 'admin') ? <Result /> : <Navigate to="/userlogin" />} 
+      />
+      <Route 
+        path="/scan" 
+        element={isAuthenticated && (role === 'user' || role === 'admin') ? <ScanMethods /> : <Navigate to="/userlogin" />} 
+      />
+      
+      {/* DOCTORS ROUTE - User, Doctor ya Admin sab access kar sakte hain */}
+      <Route 
+        path="/doctors" 
+        element={isAuthenticated && (role === 'user' || role === 'doctor' || role === 'admin') ? <Doctors /> : <Navigate to="/userlogin" />} 
       />
 
+      {/* DOCTOR ROUTES - Sirf Doctor access kar sakte hain */}
       <Route 
         path="/dctrdash" 
         element={isAuthenticated && role === 'doctor' ? <DoctorDashboard /> : <Navigate to="/doclogin" />} 
       />
 
-      {/* Other Secured Pages */}
-      <Route path="/chatbot" element={isAuthenticated ? <Chatbot /> : <Navigate to="/userlogin" />} />
-      <Route path="/result" element={<Result />} />
-      <Route path="/scan" element={<ScanMethods />} />
+      {/* ADMIN ROUTES - Sirf Admin access kar sakte hain */}
+      <Route 
+        path="/admindash" 
+        element={isAuthenticated && role === 'admin' ? <AdminDashboard /> : <Navigate to="/" />} 
+      />
 
-      {/* Fallback: Agar URL galat ho toh Home par bhej do */}
+      {/* FALLBACK */}
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );
