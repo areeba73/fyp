@@ -25,8 +25,10 @@ const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('users');
   const [activeView, setActiveView] = useState('dashboard');
   const [searchQuery, setSearchQuery] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [adminData, setAdminData] = useState(adminProfile);
+  const [adminData, setAdminData] = useState({
+    name: '',
+    email: ''
+  });
 
   // Fetch admin profile on mount
   useEffect(() => {
@@ -40,7 +42,12 @@ const AdminDashboard = () => {
 
   // Update local state when profile loads
   useEffect(() => {
-    setAdminData(adminProfile);
+    if (adminProfile && adminProfile.name) {
+      setAdminData({
+        name: adminProfile.name || '',
+        email: adminProfile.email || ''
+      });
+    }
   }, [adminProfile]);
 
   const handleDelete = (id) => {
@@ -65,13 +72,13 @@ const AdminDashboard = () => {
       adminId: user.uid,
       profileData: {
         name: adminData.name,
-        email: adminData.email,
-        twoFactor: adminData.twoFactor,
-        notifications: adminData.notifications
+        email: adminData.email
       }
-    })).then(() => {
-      alert('Settings Updated Successfully!');
-      setActiveView('dashboard');
+    })).then((result) => {
+      if (result.type === updateAdminProfile.fulfilled.type) {
+        alert('Settings Updated Successfully!');
+        setActiveView('dashboard');
+      }
     });
   };
 
@@ -100,11 +107,11 @@ const AdminDashboard = () => {
         <div className="bg-white/40 rounded-[2rem] p-8 mb-10 border border-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-6">
             <div className="w-20 h-20 rounded-full bg-[#2F357D] flex items-center justify-center font-bold text-white text-3xl shadow-lg border-4 border-white">
-              {adminData.name.charAt(0).toUpperCase()}
+              {adminData.name ? adminData.name.charAt(0).toUpperCase() : 'A'}
             </div>
             <div>
               <p className="text-sm font-medium text-blue">System Control,</p>
-              <h1 className="text-4xl font-black text-[#2F357D]">{adminData.name}</h1>
+              <h1 className="text-4xl font-black text-[#2F357D]">{adminData.name || 'Admin'}</h1>
               <div className="flex items-center gap-2 mt-1">
                 <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
                 <p className="text-xs text-blue font-bold uppercase tracking-tighter">Online & Secure</p>
@@ -236,39 +243,21 @@ const AdminDashboard = () => {
                     />
                   </div>
 
-                  <div className="flex items-center justify-between p-4 bg-blue-50 rounded-2xl border border-blue-100">
-                    <div>
-                      <label className="text-xs font-bold text-blue-900 uppercase tracking-widest">Two Factor Authentication</label>
-                      <p className="text-[10px] text-blue-600 mt-1">Extra security for your account</p>
-                    </div>
-                    <input 
-                      type="checkbox" 
-                      checked={adminData.twoFactor}
-                      onChange={(e) => setAdminData({...adminData, twoFactor: e.target.checked})}
-                      className="w-5 h-5 cursor-pointer"
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between p-4 bg-blue-50 rounded-2xl border border-blue-100">
-                    <div>
-                      <label className="text-xs font-bold text-blue-900 uppercase tracking-widest">Email Notifications</label>
-                      <p className="text-[10px] text-blue-600 mt-1">Get alerts about system activity</p>
-                    </div>
-                    <input 
-                      type="checkbox" 
-                      checked={adminData.notifications}
-                      onChange={(e) => setAdminData({...adminData, notifications: e.target.checked})}
-                      className="w-5 h-5 cursor-pointer"
-                    />
-                  </div>
-
                   <div className="pt-6 space-y-4">
                     <button 
                       onClick={handleSaveSettings}
-                      className="w-full py-4 bg-[#2F357D] text-white rounded-2xl font-bold text-sm shadow-lg hover:bg-blue-700"
+                      disabled={loading}
+                      className="w-full py-4 bg-[#2F357D] text-white rounded-2xl font-bold text-sm shadow-lg hover:bg-blue-700 disabled:opacity-50"
                     >
-                      Save Changes
+                      {loading ? 'Saving...' : 'Save Changes'}
                     </button>
+
+                    <Link 
+                      to="/forget" 
+                      className=" w-full py-2 text-center text-blue-600 font-bold text-xs hover:underline  rounded-2xl  transition-all"
+                    >
+                     Forgot Password?
+                    </Link>
                   </div>
                 </div>
               </div>

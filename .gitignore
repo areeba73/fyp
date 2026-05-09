@@ -23,4 +23,12 @@ dist-ssr
 *.sln
 *.sw?
 
-backend/serviceAccountKey.json
+# Environment variables
+.env
+.env.local
+.env.*.local  # .env.development.local, .env.production.local
+.env.example  # Optional - agar template share karna ho
+
+# OS files
+Thumbs.db
+.DS_Store

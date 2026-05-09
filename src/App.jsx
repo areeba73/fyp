@@ -51,19 +51,19 @@ function App() {
         element={isAuthenticated && (role === 'user' || role === 'admin') ? <ScanMethods /> : <Navigate to="/userlogin" />} 
       />
       
-      {/* DOCTORS ROUTE - User, Doctor ya Admin sab access kar sakte hain */}
+      {/* DOCTORS ROUTE */}
       <Route 
         path="/doctors" 
         element={isAuthenticated && (role === 'user' || role === 'doctor' || role === 'admin') ? <Doctors /> : <Navigate to="/userlogin" />} 
       />
 
-      {/* DOCTOR ROUTES - Sirf Doctor access kar sakte hain */}
+      {/* DOCTOR ROUTES */}
       <Route 
         path="/dctrdash" 
         element={isAuthenticated && role === 'doctor' ? <DoctorDashboard /> : <Navigate to="/doclogin" />} 
       />
 
-      {/* ADMIN ROUTES - Sirf Admin access kar sakte hain */}
+      {/* ADMIN ROUTES */}
       <Route 
         path="/admindash" 
         element={isAuthenticated && role === 'admin' ? <AdminDashboard /> : <Navigate to="/userlogin" />} 

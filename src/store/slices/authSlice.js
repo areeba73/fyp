@@ -1,12 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../api';
 
-// --- 1. User Signup Thunk ---
+// ===== EXISTING THUNKS =====
 export const registerUser = createAsyncThunk(
   'auth/registerUser',
   async (userData, { rejectWithValue }) => {
     try {
-      // Endpoint: /user/signup (url_prefix already adds /user)
       const response = await api.post('/user/signup', userData);
       return response.data; 
     } catch (error) {
@@ -15,12 +14,10 @@ export const registerUser = createAsyncThunk(
   }
 );
 
-// --- 2. User Login Thunk ---
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async (credentials, { rejectWithValue }) => {
     try {
-      // Endpoint: /user/login
       const response = await api.post('/user/login', credentials);
       const data = response.data;
       localStorage.setItem('user', JSON.stringify(data.user));
@@ -32,12 +29,10 @@ export const loginUser = createAsyncThunk(
   }
 );
 
-// --- 3. Doctor Signup Thunk ---
 export const registerDoctor = createAsyncThunk(
   'auth/registerDoctor',
   async (doctorData, { rejectWithValue }) => {
     try {
-      // Endpoint: /doctor/signup
       const response = await api.post('/doctor/signup', doctorData);
       return response.data;
     } catch (error) {
@@ -46,12 +41,10 @@ export const registerDoctor = createAsyncThunk(
   }
 );
 
-// --- 4. Doctor Login Thunk ---
 export const loginDoctor = createAsyncThunk(
   'auth/loginDoctor',
   async (credentials, { rejectWithValue }) => {
     try {
-      // Endpoint: /doctor/login
       const response = await api.post('/doctor/login', credentials);
       const data = response.data;
       localStorage.setItem('user', JSON.stringify(data.user));
@@ -63,6 +56,45 @@ export const loginDoctor = createAsyncThunk(
   }
 );
 
+// ===== NEW THUNKS =====
+export const forgotPassword = createAsyncThunk(
+  'auth/forgotPassword',
+  async (email, { rejectWithValue }) => {
+    try {
+      const response = await api.post('/auth/forgot-password', { email });
+      return {
+        message: response.data.message,
+        success: true,
+      };
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.error || 'Failed to send reset email. Try again.'
+      );
+    }
+  }
+);
+
+export const resetPassword = createAsyncThunk(
+  'auth/resetPassword',
+  async ({ oobCode, newPassword }, { rejectWithValue }) => {
+    try {
+      const response = await api.post('/auth/complete-reset', {
+        oobCode,
+        newPassword,
+      });
+      return {
+        message: response.data.message,
+        success: true,
+      };
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.error || 'Error resetting password'
+      );
+    }
+  }
+);
+
+// ===== STATE =====
 const savedUser = JSON.parse(localStorage.getItem('user'));
 
 const initialState = {
@@ -71,8 +103,21 @@ const initialState = {
   isAuthenticated: !!savedUser,
   loading: false,
   error: null,
+  forgotPassword: {
+    loading: false,
+    message: '',
+    error: '',
+    success: false,
+  },
+  resetPassword: {
+    loading: false,
+    message: '',
+    error: '',
+    success: false,
+  },
 };
 
+// ===== SLICE =====
 const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -90,11 +135,49 @@ const authSlice = createSlice({
     },
     setError: (state, action) => {
       state.error = action.payload;
-    }
+    },
+    clearPasswordMessages: (state) => {
+      state.forgotPassword.message = '';
+      state.forgotPassword.error = '';
+      state.resetPassword.message = '';
+      state.resetPassword.error = '';
+    },
   },
   extraReducers: (builder) => {
+    // ===== FORGOT PASSWORD CASES (addCase FIRST) =====
     builder
-      // Register (Common for all)
+      .addCase(forgotPassword.pending, (state) => {
+        state.forgotPassword.loading = true;
+        state.forgotPassword.error = '';
+        state.forgotPassword.message = '';
+      })
+      .addCase(forgotPassword.fulfilled, (state, action) => {
+        state.forgotPassword.loading = false;
+        state.forgotPassword.message = action.payload.message;
+        state.forgotPassword.success = true;
+      })
+      .addCase(forgotPassword.rejected, (state, action) => {
+        state.forgotPassword.loading = false;
+        state.forgotPassword.error = action.payload;
+        state.forgotPassword.success = false;
+      })
+      // ===== RESET PASSWORD CASES =====
+      .addCase(resetPassword.pending, (state) => {
+        state.resetPassword.loading = true;
+        state.resetPassword.error = '';
+        state.resetPassword.message = '';
+      })
+      .addCase(resetPassword.fulfilled, (state, action) => {
+        state.resetPassword.loading = false;
+        state.resetPassword.message = action.payload.message;
+        state.resetPassword.success = true;
+      })
+      .addCase(resetPassword.rejected, (state, action) => {
+        state.resetPassword.loading = false;
+        state.resetPassword.error = action.payload;
+        state.resetPassword.success = false;
+      })
+      // ===== NOW MATCHERS (addMatcher AFTER) =====
       .addMatcher(
         (action) => action.type.endsWith('/pending') && action.type.includes('register'),
         (state) => {
@@ -108,7 +191,6 @@ const authSlice = createSlice({
           state.loading = false;
         }
       )
-      // Login (Common for all)
       .addMatcher(
         (action) => action.type.endsWith('/pending') && action.type.includes('login'),
         (state) => {
@@ -126,7 +208,6 @@ const authSlice = createSlice({
           state.error = null;
         }
       )
-      // Generic Rejected Case
       .addMatcher(
         (action) => action.type.endsWith('/rejected'),
         (state, action) => {
@@ -137,5 +218,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, clearError, setError } = authSlice.actions;
+export const { logout, clearError, setError, clearPasswordMessages } = authSlice.actions;
 export default authSlice.reducer;

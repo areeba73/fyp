@@ -6,11 +6,7 @@ export const fetchAdminProfile = createAsyncThunk(
   'admin/fetchProfile',
   async (adminId, { rejectWithValue }) => {
     try {
-      const response = await api.get('/admin/profile', {
-        headers: {
-          'X-Admin-ID': adminId
-        }
-      });
+      const response = await api.get(`/admin/profile/${adminId}`);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.error || "Failed to fetch profile");
@@ -88,11 +84,7 @@ export const updateAdminProfile = createAsyncThunk(
   'admin/updateProfile',
   async ({ adminId, profileData }, { rejectWithValue }) => {
     try {
-      const response = await api.post('/admin/profile', profileData, {
-        headers: {
-          'X-Admin-ID': adminId
-        }
-      });
+      const response = await api.post(`/admin/profile/${adminId}`, profileData);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.error || "Failed to update profile");
@@ -104,9 +96,7 @@ const initialState = {
   adminProfile: {
     adminId: null,
     name: "Admin",
-    email: "admin@healthcare.com",
-    twoFactor: false,
-    notifications: true
+    email: "admin@healthcare.com"
   },
   users: [],
   doctors: [],
@@ -117,7 +107,8 @@ const initialState = {
     databaseLoad: "12%"
   },
   loading: false,
-  error: null
+  error: null,
+  successMessage: null
 };
 
 const adminSlice = createSlice({
@@ -126,6 +117,9 @@ const adminSlice = createSlice({
   reducers: {
     clearError: (state) => {
       state.error = null;
+    },
+    clearSuccess: (state) => {
+      state.successMessage = null;
     }
   },
   extraReducers: (builder) => {
@@ -145,36 +139,88 @@ const adminSlice = createSlice({
       })
       
       // Fetch Users
+      .addCase(fetchUsers.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(fetchUsers.fulfilled, (state, action) => {
+        state.loading = false;
         state.users = action.payload;
+      })
+      .addCase(fetchUsers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       })
       
       // Fetch Doctors
+      .addCase(fetchDoctors.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(fetchDoctors.fulfilled, (state, action) => {
+        state.loading = false;
         state.doctors = action.payload;
+      })
+      .addCase(fetchDoctors.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       })
       
       // Delete User
+      .addCase(deleteUser.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(deleteUser.fulfilled, (state, action) => {
+        state.loading = false;
         state.users = state.users.filter(u => u.id !== action.payload);
+        state.successMessage = "User deleted successfully";
+      })
+      .addCase(deleteUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       })
       
       // Delete Doctor
+      .addCase(deleteDoctor.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(deleteDoctor.fulfilled, (state, action) => {
+        state.loading = false;
         state.doctors = state.doctors.filter(d => d.id !== action.payload);
+        state.successMessage = "Doctor deleted successfully";
+      })
+      .addCase(deleteDoctor.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       })
       
       // Fetch Stats
+      .addCase(fetchStats.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(fetchStats.fulfilled, (state, action) => {
+        state.loading = false;
         state.stats = action.payload;
+      })
+      .addCase(fetchStats.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       })
       
       // Update Profile
+      .addCase(updateAdminProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(updateAdminProfile.fulfilled, (state, action) => {
+        state.loading = false;
         state.adminProfile = { ...state.adminProfile, ...action.payload };
+        state.successMessage = "Profile updated successfully";
+      })
+      .addCase(updateAdminProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   }
 });
 
-export const { clearError } = adminSlice.actions;
+export const { clearError, clearSuccess } = adminSlice.actions;
 export default adminSlice.reducer;
