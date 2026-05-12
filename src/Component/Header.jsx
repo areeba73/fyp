@@ -1,5 +1,7 @@
 import React from 'react';
 import img1 from '../assets/img1.png'; 
+import { Link } from 'react-router-dom';
+
 
 const Header = () => {
   return (
@@ -19,9 +21,11 @@ const Header = () => {
         </p>
         
         <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4 md:gap-5"> 
-          <button className="bg-[#2F357D] text-white backdrop-blur-xl border-2 border-white hover:border-[#2F357D] hover:bg-transparent hover:text-[#2F357D] px-8 md:px-10 py-3 md:py-4 rounded-2xl font-bold shadow-sm transition-all duration-300 text-sm md:text-base">
-            Get Started
-          </button>
+         <Link to="/usersignup">
+  <button className="bg-[#2F357D] text-white backdrop-blur-xl border-2 border-white hover:border-[#2F357D] hover:bg-transparent hover:text-[#2F357D] px-8 md:px-10 py-3 md:py-4 rounded-2xl font-bold shadow-sm transition-all duration-300 text-sm md:text-base cursor-pointer active:scale-95">
+    Get Started
+  </button>
+</Link>
           <button className="backdrop-blur-xl border border-white hover:text-white text-[#2F357D] px-8 md:px-10 py-3 md:py-4 rounded-2xl font-bold shadow-sm hover:bg-[#2F357D] transition-all duration-300 text-sm md:text-base">
             Watch Demo
           </button>

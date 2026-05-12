@@ -24,7 +24,7 @@ const FAQ = () => {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto my-12 md:my-20 px-4 md:px-6 pt-0 pb-2">
+    <div className="w-full max-w-4xl mx-auto px-4 md:px-6 -mt-4 md:-mt-8 mb-8 md:mb-12">
       {/* Heading - Responsive Text Sizes */}
       <div className="text-center mb-8 md:mb-12">
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2F357D] mb-4">

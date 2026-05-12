@@ -67,7 +67,7 @@ const DoctorLogin = () => {
             <img src={logoImg} alt="EmoTrack Logo" className="w-44 h-auto object-contain" />
           </div>
 
-          <h2 className="text-3xl md:text-4xl font-black mb-1 tracking-tight">
+          <h2 className="text-3xl md:text-4xl font-black mb-8 tracking-tight">
             <span className="text-[#5390F5]">Welcome Back</span>
             <span className="text-[#2F357D] block md:inline font-bold"> as a Doctor</span>
           </h2>
@@ -78,20 +78,21 @@ const DoctorLogin = () => {
             </div>
           )}
           
-          <form onSubmit={handleLogin} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <form onSubmit={handleLogin} className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <input 
               type="email" 
-              placeholder="Email Address" 
+              placeholder="Enter your email" 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="md:col-span-2 px-4 py-3 rounded-xl bg-white/60 border border-gray-100 outline-none text-sm transition-all focus:ring-2 focus:ring-blue-400" 
+              className="md:col-span-2 px-3 py-3 rounded-lg bg-white/60 border border-gray-100 outline-none text-sm transition-all focus:ring-2 focus:ring-blue-400" 
             />
+            
             <input 
               type="password" 
-              placeholder="Password" 
+              placeholder="Enter password" 
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="md:col-span-2 px-4 py-3 rounded-xl bg-white/60 border border-gray-100 outline-none text-sm transition-all focus:ring-2 focus:ring-blue-400" 
+              className="md:col-span-2 px-3 py-3 rounded-lg bg-white/60 border border-gray-100 outline-none text-sm transition-all focus:ring-2 focus:ring-blue-400" 
             />
             
             <div className="md:col-span-2 flex justify-end">
@@ -103,13 +104,13 @@ const DoctorLogin = () => {
             <button 
               type="submit"
               disabled={loading}
-              className="md:col-span-2 w-full py-4 bg-[#2F357D] hover:bg-blue-700 text-white rounded-xl font-bold transition-all active:scale-95 mt-2 disabled:opacity-70"
+              className="md:col-span-2 mt-1 w-full py-4 bg-[#2F357D] hover:bg-blue-700 text-white rounded-xl font-bold transition-all active:scale-95"
             >
               {loading ? "Logging in..." : "Login Now"}
             </button>
           </form>
 
-          <p className="mt-8 text-center text-sm">
+          <p className="mt-4 text-center text-[#2F357D] text-sm">
             Don't have an account?
             <Link to="/docsignup" className="ml-2 text-[#2F357D] font-bold hover:underline">
               Sign Up

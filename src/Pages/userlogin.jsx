@@ -106,13 +106,13 @@ const UserLogin = () => {
             <button 
               type="submit"
               disabled={loading}
-              className="md:col-span-2 w-full py-4 bg-[#2F357D] hover:bg-blue-700 text-white rounded-xl font-bold shadow-xl shadow-blue-200 transition-all active:scale-95 mt-2 disabled:opacity-70"
+              className="md:col-span-2 w-full py-4 bg-[#2F357D] hover:bg-blue-700 text-white rounded-xl font-bold shadow-xl shadow-blue-200 transition-all active:scale-95 mt-2 "
             >
               {loading ? "Verifying..." : "Login Now"}
             </button>
           </form>
 
-          <p className="mt-8 text-center text-[#2F357D] text-sm">
+          <p className="mt-4 text-center text-[#2F357D] text-sm">
             Don't have an account?
             <Link to="/usersignup" className="ml-2 text-[#2F357D] font-bold hover:underline">
               Sign Up

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import bg from '../assets/bg.jpeg';
 import logoImg from '../assets/logo.png';
 import { resetPassword, clearPasswordMessages } from '../store/slices/authSlice';
@@ -152,7 +153,7 @@ const ResetPassword = () => {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
               >
-                {showPassword ? '👁️' : '👁️‍🗨️'}
+  {showPassword ? <AiOutlineEye size={20} /> : <AiOutlineEyeInvisible size={20} />}
               </button>
             </div>
             {passwordErrors.newPassword && (
@@ -180,16 +181,6 @@ const ResetPassword = () => {
             {passwordErrors.confirmPassword && (
               <p className="text-xs text-red-600 mt-1">{passwordErrors.confirmPassword}</p>
             )}
-          </div>
-
-          <div className="text-xs text-gray-600 mt-4 p-3 bg-blue-50 rounded-lg">
-            <p className="font-semibold text-[#2F357D] mb-2">Password requirements:</p>
-            <ul className="space-y-1">
-              <li>✓ At least 6 characters</li>
-              <li>✓ One uppercase letter (A-Z)</li>
-              <li>✓ One lowercase letter (a-z)</li>
-              <li>✓ One number (0-9)</li>
-            </ul>
           </div>
 
           <button

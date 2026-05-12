@@ -1,36 +1,7 @@
-// import React from 'react';
-
-// const Section8 = () => {
-//   return (
-//     // min-h-screen hata kar py-10 (vertical padding) di hai taaki gap control mein rahe
-//     <div className="w-full flex flex-col items-center justify-center py-10 px-8 font-sans text-white">
-    
-//       {/* SECTION 2: Glossy CTA Container */}
-//       {/* mb-0 ya bohot chota margin rakha hai taaki niche wale section se gap kam ho */}
-//       <div className="text-center w-full max-w-2xl px-6 py-10 rounded-[40px] bg-[#2F357D] border border-white shadow-inner my-4">
-//         <h2 className="text-2xl font-semibold text-blue-300 md:text-4xl font-extralight mb-10 tracking-tight leading-relaxed">
-//           Start your emotional journey today
-//           <span className="inline-block ml-3 animate-pulse text-blue-300">💙</span>
-//         </h2>
-        
-//         <button className="relative group/btn scale-100 hover:scale-105 active:scale-95 transition-all duration-300 focus:outline-none">
-//           {/* Button Glow Effect */}
-//           <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 to-blue-600 rounded-2xl blur opacity-30 group-hover/btn:opacity-100 transition duration-1000 group-hover/btn:duration-200"></div>
-          
-//           <div className="relative bg-[#2F357D] border border-white/30 px-16 py-6 rounded-2xl leading-none flex items-center">
-//             <span className="text-white font-bold text-xl tracking-wide group-hover/btn:text-cyan-200 transition-colors duration-300">
-//               Create Free Account
-//             </span>
-//           </div>
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Section8;
-
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { Sparkles, ArrowRight } from 'lucide-react';
+
 
 const Section8 = () => {
   return (
@@ -58,16 +29,32 @@ const Section8 = () => {
           </h2>
           
           {/* Premium Glow Button - Responsive scaling */}
-          <button className="relative group/btn transition-all duration-300 active:scale-95 w-full sm:w-auto">
-            {/* Outer Glow Effect */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-blue-400 via-cyan-300 to-blue-600 rounded-2xl blur-md opacity-60 group-hover/btn:opacity-100 transition duration-500"></div>
-            
-            <div className="relative bg-[#2F357D] border border-white/50 px-6 md:px-12 py-4 md:py-5 rounded-2xl leading-none flex items-center justify-center shadow-xl">
-              <span className="text-white font-bold text-lg md:text-xl tracking-wide group-hover/btn:text-blue-200 transition-colors">
-                Create Free Account
-              </span>
-            </div>
-          </button>
+         <Link to="/usersignup" className="inline-block w-full sm:w-auto">
+  <button className="relative group/btn transition-all duration-300 active:scale-95 w-full sm:w-auto cursor-pointer overflow-hidden">
+    
+    {/* Animated Background Blur */}
+    
+    {/* Shimmer Effect */}
+    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover/btn:opacity-100 transition duration-500 -translate-x-full group-hover/btn:translate-x-full"></div>
+    
+    {/* Inner Border Glow */}
+    <div className="absolute inset-0 rounded-3xl border-2 border-transparent bg-gradient-to-r from-blue-400 to-purple-400 opacity-0 group-hover/btn:opacity-50 transition duration-500 p-0.5"></div>
+
+    {/* Main Button */}
+    <div className="relative bg-gradient-to-br from-[#2F357D] via-[#1a1f5d] to-blue-900 rounded-3xl flex items-center justify-center gap-3 shadow-2xl px-6 sm:px-8 md:px-14 py-4 sm:py-5 md:py-6 border border-blue-400/30 group-hover/btn:border-blue-300/60 transition-all">
+      
+      {/* Sparkle Icon */}
+      <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-blue-300 group-hover/btn:text-yellow-300 group-hover/btn:animate-spin transition-all" />
+      
+      <span className="text-white font-bold text-base sm:text-lg md:text-xl tracking-wider group-hover/btn:text-transparent group-hover/btn:bg-gradient-to-r group-hover/btn:from-blue-200 group-hover/btn:to-cyan-200 group-hover/btn:bg-clip-text transition-all duration-300">
+        Create Free Account
+      </span>
+      
+      {/* Arrow Icon */}
+      <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 text-blue-300 group-hover/btn:text-cyan-300 group-hover/btn:translate-x-2 group-hover/btn:scale-110 transition-all" />
+    </div>
+  </button>
+</Link>
           
         </div>
 

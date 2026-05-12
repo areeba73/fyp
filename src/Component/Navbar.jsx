@@ -122,11 +122,7 @@ const Navbar = () => {
               {link.name}
             </Link>
           ))}
-          {/* Mobile mein Sign Up options bhi add kar sakte hain yahan */}
-          <div className="flex flex-col gap-4 mt-4">
-             <Link to="/docsignup" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-bold text-blue-600">Register as Doctor</Link>
-             <Link to="/usersignup" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-bold text-blue-600">Register as Patient</Link>
-          </div>
+         
         </div>
       </div>
     </nav>
