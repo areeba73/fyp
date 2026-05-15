@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import "./firebase"; // ← YE LINE ADD KARO (sabse upar)
 import "./index.css"; 
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";

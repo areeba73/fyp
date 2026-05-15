@@ -14,6 +14,8 @@ import Chatbot from './Pages/chatbot';
 import UserDashboard from './Pages/userdash';
 import AdminDashboard from './Pages/admindash';
 import DoctorDashboard from './Pages/dctrdash';
+import AuthHandler from "./pages/AuthHandler";
+
 
 function App() {
   const { isAuthenticated, role } = useSelector((state) => state.auth);
@@ -30,6 +32,7 @@ function App() {
       <Route path="/docsignup" element={<DoctorSignup />} />
       <Route path="/forget" element={<ForgotPassword />} />
       <Route path="/reset" element={<ResetPassword />} />
+<Route path="/auth" element={<AuthHandler />} />
 
       {/* ===== PROTECTED ROUTES (Role-based) ===== */}
       
